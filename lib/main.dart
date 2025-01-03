@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:steamplayground/main_page.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  await dotenv.load();
+  final String apiKey = dotenv.env['API_KEY'] ?? '';
+  print('API KEY: $apiKey');
+  runApp(MyApp(apiKey: apiKey,));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String apiKey;
+  const MyApp({super.key, required this.apiKey});
 
   // This widget is the root of your application.
   @override
@@ -17,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         useMaterial3: true,
       ),
-      home: const MainPage(),
+      home: MainPage(apiKey: apiKey),
     );
   }
 }

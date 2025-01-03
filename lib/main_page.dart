@@ -4,7 +4,8 @@ import 'package:steamplayground/api/repository/steam_repository_impl.dart';
 import 'package:steamplayground/api/usecase/player_summaries_usecase.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final String apiKey;
+  const MainPage({super.key, required this.apiKey});
 
   @override
   State<StatefulWidget> createState() => _MainPage();
@@ -25,12 +26,11 @@ class _MainPage extends State<MainPage> {
   }
 
   Future<void> _fetchData() async {
-    const apiKey = '17F9334D45AC9974227CC471FDD0B8AC'; // Replace with your API key
     final steamIds = ["76561198064110324", "76561198112250619"]; // Replace with Steam IDs
 
     try {
       final result = await _getPlayerSummariesUseCase.execute({
-        'key': apiKey,
+        'key': widget.apiKey,
         'steamids': steamIds,
       });
       setState(() {
