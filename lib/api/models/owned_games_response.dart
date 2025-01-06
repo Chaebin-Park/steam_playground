@@ -41,29 +41,19 @@ class Game {
   final int appId;
   final String name;
   final String imgIconUrl;
-  final bool hasCommunityVisibleStats;
   final int playtimeForever;
-  final int playtimeWindowsForever;
-  final int playtimeMacForever;
-  final int playtimeLinuxForever;
-  final int playtimeDeckForever;
-  final int rtimeLastPlayed;
-  final int playtimeDisconnected;
-  final int? playtime2weeks; // Nullable as it may not exist in all games
+  final bool? hasCommunityVisibleStats;
+  final List<int>? contentDescriptorIds;
+  final bool? hasLeaderboards;
 
   Game({
     required this.appId,
     required this.name,
     required this.imgIconUrl,
-    required this.hasCommunityVisibleStats,
     required this.playtimeForever,
-    required this.playtimeWindowsForever,
-    required this.playtimeMacForever,
-    required this.playtimeLinuxForever,
-    required this.playtimeDeckForever,
-    required this.rtimeLastPlayed,
-    required this.playtimeDisconnected,
-    this.playtime2weeks,
+    this.hasCommunityVisibleStats,
+    this.contentDescriptorIds,
+    this.hasLeaderboards,
   });
 
   factory Game.fromJson(Map<String, dynamic> json) {
@@ -71,29 +61,31 @@ class Game {
       appId: json['appid'],
       name: json['name'],
       imgIconUrl: json['img_icon_url'],
-      hasCommunityVisibleStats: json['has_community_visible_stats'],
       playtimeForever: json['playtime_forever'],
-      playtimeWindowsForever: json['playtime_windows_forever'],
-      playtimeMacForever: json['playtime_mac_forever'],
-      playtimeLinuxForever: json['playtime_linux_forever'],
-      playtimeDeckForever: json['playtime_deck_forever'],
-      rtimeLastPlayed: json['rtime_last_played'],
-      playtimeDisconnected: json['playtime_disconnected'],
-      playtime2weeks: json['playtime_2weeks'], // Nullable field
+      hasCommunityVisibleStats: json['has_community_visible_stats'],
+      contentDescriptorIds: (json['content_descriptorids'] as List?)?.map((id) => id as int).toList(),
+      hasLeaderboards: json['has_leaderboards'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'appid': appId,
+      'name': name,
+      'img_icon_url': imgIconUrl,
       'playtime_forever': playtimeForever,
-      'playtime_windows_forever': playtimeWindowsForever,
-      'playtime_mac_forever': playtimeMacForever,
-      'playtime_linux_forever': playtimeLinuxForever,
-      'playtime_deck_forever': playtimeDeckForever,
-      'rtime_last_played': rtimeLastPlayed,
-      'playtime_disconnected': playtimeDisconnected,
-      if (playtime2weeks != null) 'playtime_2weeks': playtime2weeks,
+      'has_community_visible_stats': hasCommunityVisibleStats,
+      'content_descriptorids': contentDescriptorIds,
+      'has_leaderboards': hasLeaderboards,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Game && other.appId == appId;
+  }
+
+  @override
+  int get hashCode => appId.hashCode;
 }

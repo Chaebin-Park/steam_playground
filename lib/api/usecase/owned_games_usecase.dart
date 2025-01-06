@@ -9,6 +9,12 @@ class OwnedGamesUseCase implements UseCase<dynamic, Map<String, dynamic>> {
 
   @override
   Future<OwnedGamesResponse> execute(Map<String, dynamic> queryParameters) async {
+    Map<String, dynamic> options = {
+      'include_appinfo': 1,
+      'include_played_free_game': 1,
+      'format': 'json'
+    };
+    queryParameters.addAll(options);
     if (!queryParameters.containsKey('key') || !queryParameters.containsKey('steamid')) {
       throw Exception('Missing required parameters: key, steamid');
     }

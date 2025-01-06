@@ -24,7 +24,8 @@ class _MainPage extends State<MainPage> {
   late final OwnedGamesUseCase _ownedGamesUseCase;
   final TextEditingController _controller = TextEditingController();
   final Set<Player> _playerSet = {};
-  String? _errorMessage;
+  final Set<Game> _games = {};
+  String _errorMessage = "";
 
   @override
   void initState() {
@@ -70,8 +71,51 @@ class _MainPage extends State<MainPage> {
         const SizedBox(height: 16),
         if (_playerSet.isNotEmpty) playerList(),
         const SizedBox(height: 16),
+        if (_games.isNotEmpty) gameList(),
+        const SizedBox(
+          height: 16,
+        ),
+        Text("Bottom")
       ],
     );
+  }
+
+  String getSteamImageUrl(int appId, String imageHash) {
+    return 'https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/$appId/$imageHash.jpg';
+  }
+
+  Widget gameList() {
+    return ListView.builder(
+        itemCount: _games.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          final game = _games.elementAt(index);
+          return GestureDetector(
+            onTap: () {
+              print('Game tapped: ${game.name}');
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              margin: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Image.network(getSteamImageUrl(game.appId, game.imgIconUrl)),
+                  const SizedBox(width: 8), // 간격 추가
+                  Expanded(
+                    child: Text(
+                      game.name,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Widget playerList() {
@@ -86,7 +130,9 @@ class _MainPage extends State<MainPage> {
         itemBuilder: (context, index) {
           final player = _playerSet.elementAt(index);
           return GestureDetector(
-            onTap: () { _handleFetchOwnedGames(player.steamId); },
+            onTap: () {
+              _handleFetchOwnedGames(player.steamId);
+            },
             child: Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
@@ -134,11 +180,11 @@ class _MainPage extends State<MainPage> {
         onPressed: _handelFetchPlayerSummaries,
         child: const Text('Fetch Data'),
       ),
-      if (_errorMessage != null)
+      if (_errorMessage.isNotEmpty)
         Padding(
           padding: const EdgeInsets.only(top: 16),
           child: Text(
-            _errorMessage!,
+            _errorMessage,
             style: const TextStyle(color: Colors.red),
           ),
         ),
@@ -169,18 +215,16 @@ class _MainPage extends State<MainPage> {
       final response = await _ownedGamesUseCase.execute({
         'key': widget.apiKey,
         'steamid': steamId,
-        'include_appinfo': 2,
-        'include_played_free_game': 1,
-        'format': 'json'
       });
 
-      print(response.response.games);
       setState(() {
-
+        _games.clear();
+        _games.addAll(response.response.games);
       });
-    } catch(e) {
+    } catch (e) {
       setState(() {
-        _errorMessage = e.toString();
+        _errorMessage = "owned games error: ${e.toString()}";
+        print(e);
       });
     }
   }
@@ -202,7 +246,6 @@ class _MainPage extends State<MainPage> {
       if (match != null) {
         final vanityUrl = match.group(1);
         steamId = await _fetchSteamIdFromVanityUrl(vanityUrl!);
-        print(steamId);
       }
     }
 
@@ -215,7 +258,7 @@ class _MainPage extends State<MainPage> {
 
       setState(() {
         _playerSet.add(player);
-        _errorMessage = null;
+        _errorMessage = "";
       });
     } catch (e) {
       setState(() {
