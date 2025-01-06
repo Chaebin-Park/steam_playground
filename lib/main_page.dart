@@ -35,8 +35,10 @@ class _MainPage extends State<MainPage> {
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [top(), body()],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [top(), body()],
+        ),
       ),
     ));
   }
@@ -57,62 +59,74 @@ class _MainPage extends State<MainPage> {
     return Column(
       children: [
         const SizedBox(height: 16),
-        TextField(
-          controller: _controller,
-          decoration: const InputDecoration(
-            labelText: 'Enter Steam Profile URL',
-            border: OutlineInputBorder(),
-          ),
-        ),
+        search(),
         const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: _handelFetchPlayerSummaries,
-          child: const Text('Fetch Data'),
-        ),
-        if (_errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Text(
-              _errorMessage!,
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
+        if (_playerSet.isNotEmpty)
+          playerList(),
         const SizedBox(height: 16),
-        SizedBox(
-          height: 220, // 원하는 높이 지정
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _playerSet.length,
-            itemBuilder: (context, index) {
-              final player = _playerSet.elementAt(index);
-              return Container(
-                width: 200,
-                margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Column(children: [
-                  Image.network(player.avatarfull),
-                  Center(
-                    child: Text(
-                      player.personaname,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ]),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 16,),
         Text('Bottom')
       ],
     );
+  }
+
+  Widget playerList() {
+    return SizedBox(
+      height: 250,
+      child: ListView.builder(
+        physics: const ClampingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        itemCount: _playerSet.length,
+        itemBuilder: (context, index) {
+          final player = _playerSet.elementAt(index);
+          return Container(
+            width: 200,
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+              color: Colors.blueAccent,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Column(children: [
+              Image.network(player.avatarfull),
+              Center(
+                child: Text(
+                  player.personaname,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ]),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget search() {
+    return Column(children: [
+      TextField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: 'Enter Steam Profile URL',
+          border: OutlineInputBorder(),
+        ),
+      ),
+      const SizedBox(height: 16),
+      ElevatedButton(
+        onPressed: _handelFetchPlayerSummaries,
+        child: const Text('Fetch Data'),
+      ),
+      if (_errorMessage != null)
+        Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Text(
+            _errorMessage!,
+            style: const TextStyle(color: Colors.red),
+          ),
+        ),
+    ]);
   }
 
   String? _extractSteamId(String url) {
