@@ -23,42 +23,42 @@ class ResponseData {
 }
 
 class Player {
-  final String steamid;
-  final String personaname;
-  final String profileurl;
+  final String steamId;
+  final String personaName;
+  final String profileUrl;
   final String avatar;
-  final String avatarfull;
-  final int lastlogoff;
-  final String? realname;
+  final String avatarFull;
+  final int lastLogoff;
+  final String? realName;
 
   Player({
-    required this.steamid,
-    required this.personaname,
-    required this.profileurl,
+    required this.steamId,
+    required this.personaName,
+    required this.profileUrl,
     required this.avatar,
-    required this.avatarfull,
-    required this.lastlogoff,
-    this.realname,
+    required this.avatarFull,
+    required this.lastLogoff,
+    this.realName,
   });
 
   factory Player.fromJson(Map<String, dynamic> json) {
     return Player(
-      steamid: json['steamid'],
-      personaname: json['personaname'],
-      profileurl: json['profileurl'],
+      steamId: json['steamid'],
+      personaName: json['personaname'],
+      profileUrl: json['profileurl'],
       avatar: json['avatar'],
-      avatarfull: json['avatarfull'],
-      lastlogoff: json['lastlogoff'],
-      realname: json['realname'],
+      avatarFull: json['avatarfull'],
+      lastLogoff: json['lastlogoff'],
+      realName: json['realname'],
     );
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Player && other.steamid == steamid;
+    return other is Player && other.steamId == steamId;
   }
 
   @override
-  int get hashCode => steamid.hashCode;
+  int get hashCode => steamId.hashCode;
 }

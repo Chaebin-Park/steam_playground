@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:steamplayground/api/api_client.dart';
 import 'package:steamplayground/api/models/player_summaries_response.dart';
+import 'package:steamplayground/api/models/resolve_vanity_url.dart';
 import 'package:steamplayground/api/repository/steam_repository_impl.dart';
 import 'package:steamplayground/api/usecase/player_summaries_usecase.dart';
+import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
 
 class MainPage extends StatefulWidget {
   final String apiKey;
@@ -17,6 +19,7 @@ class _MainPage extends State<MainPage> {
   late final ApiClient _apiClient;
   late final SteamRepositoryImpl _repository;
   late final PlayerSummariesUseCase _getPlayerSummariesUseCase;
+  late final ResolveVanityURLUseCase _resolveVanityURLUseCase;
   final TextEditingController _controller = TextEditingController();
   final Set<Player> _playerSet = {};
   String? _errorMessage;
@@ -28,19 +31,20 @@ class _MainPage extends State<MainPage> {
     _repository = SteamRepositoryImpl(apiClient: _apiClient);
     _getPlayerSummariesUseCase =
         PlayerSummariesUseCase(repository: _repository);
+    _resolveVanityURLUseCase = ResolveVanityURLUseCase(repository: _repository);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [top(), body()],
-        ),
-      ),
-    ));
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [top(), body()],
+            ),
+          ),
+        ));
   }
 
   Widget top() {
@@ -61,8 +65,7 @@ class _MainPage extends State<MainPage> {
         const SizedBox(height: 16),
         search(),
         const SizedBox(height: 16),
-        if (_playerSet.isNotEmpty)
-          playerList(),
+        if (_playerSet.isNotEmpty) playerList(),
         const SizedBox(height: 16),
         Text('Bottom')
       ],
@@ -88,10 +91,10 @@ class _MainPage extends State<MainPage> {
               borderRadius: BorderRadius.circular(8.0),
             ),
             child: Column(children: [
-              Image.network(player.avatarfull),
+              Image.network(player.avatarFull),
               Center(
                 child: Text(
-                  player.personaname,
+                  player.personaName,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -141,15 +144,44 @@ class _MainPage extends State<MainPage> {
     return null;
   }
 
-  Future<void> _handelFetchPlayerSummaries() async {
-    final inputUrl = _controller.text;
-    final steamId = _extractSteamId(inputUrl);
+  Future<String?> _fetchSteamIdFromVanityUrl(String vanityUrl) async {
+    try {
+      final response = await _resolveVanityURLUseCase
+          .execute({'key': widget.apiKey, 'vanityurl': vanityUrl});
 
-    if (steamId == null) {
+      final data = response.response;
+      if (data.success == 1) {
+        return data.steamid; // Steam ID 반환
+      } else {
+        throw Exception('Vanity URL not resolved: ${data.success}');
+      }
+    } catch (e) {
       setState(() {
-        _errorMessage = 'Invalid Steam Profile URL';
+        _errorMessage = e.toString();
       });
-      return;
+    }
+    return null;
+  }
+
+  Future<void> _handelFetchPlayerSummaries() async {
+    final url = _controller.text;
+    String? steamId;
+    if (url.contains('/profiles/')) {
+      // Steam ID가 URL에 포함된 경우
+      final regex = RegExp(r'profiles/(\d+)/?');
+      final match = regex.firstMatch(url);
+      if (match != null) {
+        steamId = match.group(1);
+      }
+    } else if (url.contains('/id/')) {
+      // 커스텀 URL의 경우 ResolveVanityURL API 호출
+      final regex = RegExp(r'id/([^/]+)/?');
+      final match = regex.firstMatch(url);
+      if (match != null) {
+        final vanityUrl = match.group(1);
+        steamId = await _fetchSteamIdFromVanityUrl(vanityUrl!);
+        print(steamId);
+      }
     }
 
     try {
@@ -168,21 +200,66 @@ class _MainPage extends State<MainPage> {
       setState(() {
         _errorMessage = e.toString();
       });
+
+      // final inputUrl = _controller.text;
+      // final steamId = _extractSteamId(inputUrl);
+      //
+      // if (steamId == null) {
+      //   setState(() {
+      //     _errorMessage = 'Invalid Steam Profile URL';
+      //   });
+      //   return;
+      // }
+      //
+      // try {
+      //   final response = await _getPlayerSummariesUseCase.execute({
+      //     'key': widget.apiKey,
+      //     'steamids': steamId,
+      //   });
+      //   final player = response.response.players.first;
+      //
+      //   setState(() {
+      //     // playerset contain check
+      //     _playerSet.add(player);
+      //     _errorMessage = null;
+      //   });
+      // } catch (e) {
+      //   setState(() {
+      //     _errorMessage = e.toString();
+      //   });
+      // }
     }
   }
-
-/**
-    Future<PlayerSummariesResponse> _fetchData(List<String> steamIds) async {
-    try {
-    final result = await _getPlayerSummariesUseCase.execute({
-    'key': widget.apiKey,
-    'steamids': steamIds,
-    });
-
-    return PlayerSummariesResponse.fromJson(result);
-    } catch (e) {
-    throw Exception('Error: $e');
-    }
-    }
- **/
 }
+/**
+ * Future<void> getSteamUserInfo(String url) async {
+    const apiKey = 'YOUR_API_KEY';
+
+    String? steamId;
+    if (url.contains('/profiles/')) {
+    // Steam ID가 URL에 포함된 경우
+    final regex = RegExp(r'profiles/(\d+)/?');
+    final match = regex.firstMatch(url);
+    if (match != null) {
+    steamId = match.group(1);
+    }
+    } else if (url.contains('/id/')) {
+    // 커스텀 URL의 경우 ResolveVanityURL API 호출
+    final regex = RegExp(r'id/([^/]+)/?');
+    final match = regex.firstMatch(url);
+    if (match != null) {
+    final vanityUrl = match.group(1);
+    steamId = await fetchSteamIdFromVanityUrl(apiKey, vanityUrl!);
+    }
+    }
+
+    if (steamId == null) {
+    print('Invalid URL format or user not found');
+    return;
+    }
+
+    // Steam ID로 GetPlayerSummaries 호출
+    final userInfo = await fetchPlayerSummaries(apiKey, steamId);
+    print('User Info: $userInfo');
+    }
+ */

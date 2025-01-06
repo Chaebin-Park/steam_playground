@@ -1,11 +1,11 @@
 class OwnedGamesResponse {
-  final PlayerStats playerstats;
+  final PlayerStats playerStats;
 
-  OwnedGamesResponse({required this.playerstats});
+  OwnedGamesResponse({required this.playerStats});
 
   factory OwnedGamesResponse.fromJson(Map<String, dynamic> json) {
     return OwnedGamesResponse(
-      playerstats: PlayerStats.fromJson(json['playerstats']),
+      playerStats: PlayerStats.fromJson(json['playerstats']),
     );
   }
 }

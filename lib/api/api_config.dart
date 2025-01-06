@@ -4,5 +4,6 @@ class ApiConfig {
     'getPlayerSummaries': '/ISteamUser/GetPlayerSummaries/v0002/',
     'getPlayerAchievements': '/ISteamUserStats/GetPlayerAchievements/v0001/',
     'getOwnedGames': '/IPlayerService/GetOwnedGames/v0001/',
+    'resolveVanityURL': '/ISteamUser/ResolveVanityURL/v1/'
   };
 }

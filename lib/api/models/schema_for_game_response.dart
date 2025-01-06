@@ -49,14 +49,14 @@ class Achievement {
   final String displayName;
   final String description;
   final String icon;
-  final String icongray;
+  final String iconGray;
 
   Achievement({
     required this.name,
     required this.displayName,
     required this.description,
     required this.icon,
-    required this.icongray,
+    required this.iconGray,
   });
 
   factory Achievement.fromJson(Map<String, dynamic> json) {
@@ -65,7 +65,7 @@ class Achievement {
       displayName: json['displayName'],
       description: json['description'] ?? '',
       icon: json['icon'],
-      icongray: json['icongray'],
+      iconGray: json['icongray'],
     );
   }
 }

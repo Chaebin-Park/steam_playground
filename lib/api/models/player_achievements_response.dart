@@ -1,11 +1,11 @@
 class PlayerAchievementsResponse {
-  final PlayerStats playerstats;
+  final PlayerStats playerStats;
 
-  PlayerAchievementsResponse({required this.playerstats});
+  PlayerAchievementsResponse({required this.playerStats});
 
   factory PlayerAchievementsResponse.fromJson(Map<String, dynamic> json) {
     return PlayerAchievementsResponse(
-      playerstats: PlayerStats.fromJson(json['playerstats']),
+      playerStats: PlayerStats.fromJson(json['playerstats']),
     );
   }
 }
