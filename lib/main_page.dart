@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:steamplayground/api/api_client.dart';
+import 'package:steamplayground/api/models/owned_games_response.dart';
 import 'package:steamplayground/api/models/player_summaries_response.dart';
-import 'package:steamplayground/api/models/resolve_vanity_url.dart';
 import 'package:steamplayground/api/repository/steam_repository_impl.dart';
+import 'package:steamplayground/api/usecase/owned_games_usecase.dart';
 import 'package:steamplayground/api/usecase/player_summaries_usecase.dart';
 import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
 
@@ -20,6 +21,7 @@ class _MainPage extends State<MainPage> {
   late final SteamRepositoryImpl _repository;
   late final PlayerSummariesUseCase _getPlayerSummariesUseCase;
   late final ResolveVanityURLUseCase _resolveVanityURLUseCase;
+  late final OwnedGamesUseCase _ownedGamesUseCase;
   final TextEditingController _controller = TextEditingController();
   final Set<Player> _playerSet = {};
   String? _errorMessage;
@@ -32,19 +34,20 @@ class _MainPage extends State<MainPage> {
     _getPlayerSummariesUseCase =
         PlayerSummariesUseCase(repository: _repository);
     _resolveVanityURLUseCase = ResolveVanityURLUseCase(repository: _repository);
+    _ownedGamesUseCase = OwnedGamesUseCase(repository: _repository);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [top(), body()],
-            ),
-          ),
-        ));
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [top(), body()],
+        ),
+      ),
+    ));
   }
 
   Widget top() {
@@ -67,7 +70,6 @@ class _MainPage extends State<MainPage> {
         const SizedBox(height: 16),
         if (_playerSet.isNotEmpty) playerList(),
         const SizedBox(height: 16),
-        Text('Bottom')
       ],
     );
   }
@@ -83,26 +85,35 @@ class _MainPage extends State<MainPage> {
         itemCount: _playerSet.length,
         itemBuilder: (context, index) {
           final player = _playerSet.elementAt(index);
-          return Container(
-            width: 200,
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            decoration: BoxDecoration(
-              color: Colors.blueAccent,
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Column(children: [
-              Image.network(player.avatarFull),
-              Center(
-                child: Text(
-                  player.personaName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+          return GestureDetector(
+            onTap: () { _handleFetchOwnedGames(player.steamId); },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              margin: EdgeInsets.all(8),
+              child: Container(
+                width: 200,
+                margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.network(player.avatarFull),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Center(
+                        child: Text(
+                          player.personaName,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ]),
               ),
-            ]),
+            ),
           );
         },
       ),
@@ -134,16 +145,6 @@ class _MainPage extends State<MainPage> {
     ]);
   }
 
-  String? _extractSteamId(String url) {
-    final regex = RegExp(r'https:\/\/steamcommunity\.com\/profiles\/(\d+)\/?');
-    final match = regex.firstMatch(url);
-
-    if (match != null) {
-      return match.group(1);
-    }
-    return null;
-  }
-
   Future<String?> _fetchSteamIdFromVanityUrl(String vanityUrl) async {
     try {
       final response = await _resolveVanityURLUseCase
@@ -161,6 +162,27 @@ class _MainPage extends State<MainPage> {
       });
     }
     return null;
+  }
+
+  Future<void> _handleFetchOwnedGames(String steamId) async {
+    try {
+      final response = await _ownedGamesUseCase.execute({
+        'key': widget.apiKey,
+        'steamid': steamId,
+        'include_appinfo': 2,
+        'include_played_free_game': 1,
+        'format': 'json'
+      });
+
+      print(response.response.games);
+      setState(() {
+
+      });
+    } catch(e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    }
   }
 
   Future<void> _handelFetchPlayerSummaries() async {
@@ -192,7 +214,6 @@ class _MainPage extends State<MainPage> {
       final player = response.response.players.first;
 
       setState(() {
-        // playerset contain check
         _playerSet.add(player);
         _errorMessage = null;
       });
@@ -200,66 +221,7 @@ class _MainPage extends State<MainPage> {
       setState(() {
         _errorMessage = e.toString();
       });
-
-      // final inputUrl = _controller.text;
-      // final steamId = _extractSteamId(inputUrl);
-      //
-      // if (steamId == null) {
-      //   setState(() {
-      //     _errorMessage = 'Invalid Steam Profile URL';
-      //   });
-      //   return;
-      // }
-      //
-      // try {
-      //   final response = await _getPlayerSummariesUseCase.execute({
-      //     'key': widget.apiKey,
-      //     'steamids': steamId,
-      //   });
-      //   final player = response.response.players.first;
-      //
-      //   setState(() {
-      //     // playerset contain check
-      //     _playerSet.add(player);
-      //     _errorMessage = null;
-      //   });
-      // } catch (e) {
-      //   setState(() {
-      //     _errorMessage = e.toString();
-      //   });
-      // }
     }
+    _controller.clear();
   }
 }
-/**
- * Future<void> getSteamUserInfo(String url) async {
-    const apiKey = 'YOUR_API_KEY';
-
-    String? steamId;
-    if (url.contains('/profiles/')) {
-    // Steam ID가 URL에 포함된 경우
-    final regex = RegExp(r'profiles/(\d+)/?');
-    final match = regex.firstMatch(url);
-    if (match != null) {
-    steamId = match.group(1);
-    }
-    } else if (url.contains('/id/')) {
-    // 커스텀 URL의 경우 ResolveVanityURL API 호출
-    final regex = RegExp(r'id/([^/]+)/?');
-    final match = regex.firstMatch(url);
-    if (match != null) {
-    final vanityUrl = match.group(1);
-    steamId = await fetchSteamIdFromVanityUrl(apiKey, vanityUrl!);
-    }
-    }
-
-    if (steamId == null) {
-    print('Invalid URL format or user not found');
-    return;
-    }
-
-    // Steam ID로 GetPlayerSummaries 호출
-    final userInfo = await fetchPlayerSummaries(apiKey, steamId);
-    print('User Info: $userInfo');
-    }
- */

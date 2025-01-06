@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 class ApiClient {
-  static const String baseUrl = 'http://api.steampowered.com';
+  static const String baseUrl = 'https://api.steampowered.com';
   final Dio _dio;
 
   ApiClient({Dio? dio})
