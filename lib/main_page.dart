@@ -73,6 +73,8 @@ class _MainPage extends State<MainPage> {
     return SizedBox(
       height: 250,
       child: ListView.builder(
+        primary: false,
+        shrinkWrap: true,
         physics: const ClampingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemCount: _playerSet.length,

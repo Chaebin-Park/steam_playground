@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:steamplayground/common/my_custom_scroll_behavior.dart';
 import 'package:steamplayground/main_page.dart';
 
 void main() async {
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: MainPage(apiKey: apiKey),
+      scrollBehavior: MyCustomScrollBehavior(),
     );
   }
 }
