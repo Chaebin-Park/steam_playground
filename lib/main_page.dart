@@ -81,7 +81,7 @@ class _MainPage extends State<MainPage> {
   }
 
   String getSteamImageUrl(int appId, String imageHash) {
-    return 'https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/$appId/$imageHash.jpg';
+    return 'https://cdn.cloudflare.steamstatic.com/steam/apps/$appId/header.jpg';
   }
 
   Widget gameList() {
@@ -95,10 +95,7 @@ class _MainPage extends State<MainPage> {
             onTap: () {
               print('Game tapped: ${game.name}');
             },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
+            child: Container(
               margin: const EdgeInsets.all(8),
               child: Row(
                 children: [
