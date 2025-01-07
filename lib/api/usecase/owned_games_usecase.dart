@@ -24,8 +24,6 @@ class OwnedGamesUseCase implements UseCase<dynamic, Map<String, dynamic>> {
       queryParameters: queryParameters,
     );
 
-    print(response);
-
     return OwnedGamesResponse.fromJson(response);
   }
 }

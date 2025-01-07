@@ -1,57 +1,66 @@
 class SchemaForGameResponse {
-  final Game game;
+  final SchemaGame game;
 
   SchemaForGameResponse({required this.game});
 
   factory SchemaForGameResponse.fromJson(Map<String, dynamic> json) {
     return SchemaForGameResponse(
-      game: Game.fromJson(json['game']),
+      game: SchemaGame.fromJson(json['game']),
     );
   }
 }
 
-class Game {
-  final String gameName;
+class SchemaGame {
+  final String? gameName;
   final String gameVersion;
   final AvailableGameStats availableGameStats;
 
-  Game({
+  SchemaGame({
     required this.gameName,
     required this.gameVersion,
     required this.availableGameStats,
   });
 
-  factory Game.fromJson(Map<String, dynamic> json) {
-    return Game(
+  factory SchemaGame.fromJson(Map<String, dynamic> json) {
+    return SchemaGame(
       gameName: json['gameName'],
       gameVersion: json['gameVersion'],
       availableGameStats: AvailableGameStats.fromJson(json['availableGameStats']),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is SchemaGame && other.gameName == gameName;
+  }
+
+  @override
+  int get hashCode => gameName.hashCode;
 }
 
 class AvailableGameStats {
-  final List<Achievement> achievements;
+  final List<SchemaAchievement> achievements;
 
   AvailableGameStats({required this.achievements});
 
   factory AvailableGameStats.fromJson(Map<String, dynamic> json) {
     return AvailableGameStats(
       achievements: (json['achievements'] as List)
-          .map((achievement) => Achievement.fromJson(achievement))
+          .map((achievement) => SchemaAchievement.fromJson(achievement))
           .toList(),
     );
   }
 }
 
-class Achievement {
+class SchemaAchievement {
   final String name;
   final String displayName;
   final String description;
   final String icon;
   final String iconGray;
 
-  Achievement({
+  SchemaAchievement({
     required this.name,
     required this.displayName,
     required this.description,
@@ -59,8 +68,8 @@ class Achievement {
     required this.iconGray,
   });
 
-  factory Achievement.fromJson(Map<String, dynamic> json) {
-    return Achievement(
+  factory SchemaAchievement.fromJson(Map<String, dynamic> json) {
+    return SchemaAchievement(
       name: json['name'],
       displayName: json['displayName'],
       description: json['description'] ?? '',

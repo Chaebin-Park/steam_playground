@@ -13,7 +13,7 @@ class PlayerAchievementsResponse {
 class PlayerStats {
   final String steamID;
   final String gameName;
-  final List<Achievement> achievements;
+  final List<PlayerAchievement> achievements;
 
   PlayerStats({
     required this.steamID,
@@ -26,25 +26,25 @@ class PlayerStats {
       steamID: json['steamID'],
       gameName: json['gameName'],
       achievements: (json['achievements'] as List)
-          .map((achievement) => Achievement.fromJson(achievement))
+          .map((achievement) => PlayerAchievement.fromJson(achievement))
           .toList(),
     );
   }
 }
 
-class Achievement {
+class PlayerAchievement {
   final String apiname;
   final int achieved;
   final int unlocktime;
 
-  Achievement({
+  PlayerAchievement({
     required this.apiname,
     required this.achieved,
     required this.unlocktime,
   });
 
-  factory Achievement.fromJson(Map<String, dynamic> json) {
-    return Achievement(
+  factory PlayerAchievement.fromJson(Map<String, dynamic> json) {
+    return PlayerAchievement(
       apiname: json['apiname'],
       achieved: json['achieved'],
       unlocktime: json['unlocktime'],

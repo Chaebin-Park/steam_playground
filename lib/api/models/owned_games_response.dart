@@ -18,14 +18,14 @@ class OwnedGamesResponse {
 
 class ResponseData {
   final int gameCount;
-  final List<Game> games;
+  final List<OwnedGame> games;
 
   ResponseData({required this.gameCount, required this.games});
 
   factory ResponseData.fromJson(Map<String, dynamic> json) {
     return ResponseData(
       gameCount: json['game_count'],
-      games: (json['games'] as List).map((game) => Game.fromJson(game)).toList(),
+      games: (json['games'] as List).map((game) => OwnedGame.fromJson(game)).toList(),
     );
   }
 
@@ -37,7 +37,7 @@ class ResponseData {
   }
 }
 
-class Game {
+class OwnedGame {
   final int appId;
   final String name;
   final String imgIconUrl;
@@ -46,7 +46,7 @@ class Game {
   final List<int>? contentDescriptorIds;
   final bool? hasLeaderboards;
 
-  Game({
+  OwnedGame({
     required this.appId,
     required this.name,
     required this.imgIconUrl,
@@ -56,8 +56,8 @@ class Game {
     this.hasLeaderboards,
   });
 
-  factory Game.fromJson(Map<String, dynamic> json) {
-    return Game(
+  factory OwnedGame.fromJson(Map<String, dynamic> json) {
+    return OwnedGame(
       appId: json['appid'],
       name: json['name'],
       imgIconUrl: json['img_icon_url'],
@@ -83,7 +83,7 @@ class Game {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Game && other.appId == appId;
+    return other is OwnedGame && other.appId == appId;
   }
 
   @override
