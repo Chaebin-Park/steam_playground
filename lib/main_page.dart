@@ -49,19 +49,6 @@ class _MainPage extends State<MainPage> {
     _schemaForGameUseCase = SchemaForGameUseCase(repository: _repository);
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //       body: Padding(
-  //     padding: const EdgeInsets.all(16.0),
-  //     child: SingleChildScrollView(
-  //       child: Column(
-  //         children: [top(), body()],
-  //       ),
-  //     ),
-  //   ));
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,8 +77,7 @@ class _MainPage extends State<MainPage> {
               ),
             ),
           // 게임 리스트
-          if (_games.isNotEmpty)
-            gameList(),
+          if (_games.isNotEmpty) gameList(),
           // 하단 텍스트
           SliverToBoxAdapter(
             child: Padding(
@@ -105,7 +91,6 @@ class _MainPage extends State<MainPage> {
       ),
     );
   }
-
 
   Widget top() {
     return Row(
@@ -143,7 +128,7 @@ class _MainPage extends State<MainPage> {
   Widget gameList() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
+        (context, index) {
           final isExpanded = expandedState[index] ?? false;
           final game = _games.elementAt(index);
           final achievements =
@@ -151,8 +136,7 @@ class _MainPage extends State<MainPage> {
                   List.empty();
 
           return Container(
-            margin:
-            const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey[300]!),
               borderRadius: BorderRadius.circular(8),
@@ -165,6 +149,7 @@ class _MainPage extends State<MainPage> {
                     setState(() {
                       expandedState[index] = !isExpanded;
                     });
+                    _fetchGameSchema(game.appId);
                   },
                   child: Row(
                     children: [
@@ -184,9 +169,7 @@ class _MainPage extends State<MainPage> {
                           ),
                         ),
                       ),
-                      Icon(isExpanded
-                          ? Icons.expand_less
-                          : Icons.expand_more),
+                      Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
                     ],
                   ),
                 ),
@@ -194,16 +177,33 @@ class _MainPage extends State<MainPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
-                      width: double.infinity,
-                      color: Colors.grey[200],
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          "Achievements: ${achievements.length}",
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ),
+                        width: double.infinity,
+                        color: Colors.grey[200],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                "Achievements:",
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: achievements.length,
+                              itemBuilder: (context, index) {
+                                final achievement = achievements[index];
+                                return ListTile(
+                                  leading: Image.network(achievement.icon,),
+                                  title: Text(achievement.displayName),
+                                  subtitle: Text(achievement.description ?? "no description"),
+                                );
+                              },
+                            )
+                          ],
+                        )),
                   ),
               ],
             ),
@@ -213,68 +213,6 @@ class _MainPage extends State<MainPage> {
       ),
     );
   }
-
-
-  // Widget gameList() {
-  //   final Map<int, bool> expandedState = {};
-  //
-  //   return ListView.builder(
-  //       itemCount: _games.length,
-  //       shrinkWrap: true,
-  //       physics: const NeverScrollableScrollPhysics(),
-  //       itemBuilder: (context, index) {
-  //         final isExpanded = expandedState[index] ?? false;
-  //         final game = _games.elementAt(index);
-  //         final achievements = _gameSchema[game.appId]?.availableGameStats.achievements ?? List.empty();
-  //
-  //         for (var ach in achievements) {
-  //           print("${ach.name}  ${ach.displayName}  ${ach.description}  ${ach.icon}");
-  //         }
-  //
-  //         return GestureDetector(
-  //           onTap: () {
-  //             setState(() {
-  //               expandedState[index] = !isExpanded;
-  //             });
-  //             _fetchGameSchema(game.appId);
-  //           },
-  //           child: Container(
-  //             margin: const EdgeInsets.all(8),
-  //             child: Row(
-  //               children: [
-  //                 Image.network(getSteamImageUrl(game.appId, game.imgIconUrl)),
-  //                 const SizedBox(width: 8),
-  //                 Expanded(
-  //                   child: Column(
-  //                     children: [
-  //                       Text(
-  //                         game.name,
-  //                         style: const TextStyle(
-  //                             fontSize: 16, fontWeight: FontWeight.bold),
-  //                       ),
-  //                       if (achievements.isNotEmpty)
-  //                         ListView.builder(itemBuilder: (context, index) {
-  //                           SchemaAchievement achievement = achievements[index];
-  //                           return SizedBox(
-  //                             height: 200,
-  //                             child: Row(
-  //                               children: [
-  //                                 // Image.network(achievement.icon),
-  //                                 Text(achievement.displayName),
-  //                                 Text(achievement.description)
-  //                               ],
-  //                             ),
-  //                           );
-  //                         })
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
 
   Widget playerList() {
     return SizedBox(
@@ -291,6 +229,7 @@ class _MainPage extends State<MainPage> {
             onTap: () {
               _handleFetchOwnedGames(player.steamId);
               setState(() {
+                if (player.steamId != _steamId) expandedState.clear();
                 _steamId = player.steamId;
               });
             },
@@ -354,11 +293,11 @@ class _MainPage extends State<MainPage> {
 
   Future<void> _fetchGameSchema(int appId) async {
     try {
-      final response = await _schemaForGameUseCase.execute(
-          {'key': widget.apiKey, 'appid': appId});
+      final response = await _schemaForGameUseCase
+          .execute({'key': widget.apiKey, 'appid': appId});
       final game = response.game;
-      print("${game.gameName}, ${game.gameVersion}, ${game.availableGameStats
-          .achievements.length}");
+      print(
+          "${game.gameName}, ${game.gameVersion}, ${game.availableGameStats.achievements.length}");
       setState(() {
         _gameSchema[appId] = game;
       });
