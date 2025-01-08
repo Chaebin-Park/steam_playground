@@ -30,10 +30,14 @@ class _MainPage extends State<MainPage> {
   final TextEditingController _controller = TextEditingController();
   final Set<Player> _playerSet = {};
   final Set<OwnedGame> _games = {};
+  final Map<int, Map<String, int>> _playerAchievement = {};
   final Map<int, SchemaGame> _gameSchema = {};
   final Map<int, bool> expandedState = {};
   String _steamId = "";
-  String _errorMessage = "";
+  bool _isLoading = false;
+  int _currentIndex = 0;
+  int _totalSteps = 0;
+  String _loadingDescription = "";
 
   @override
   void initState() {
@@ -52,41 +56,97 @@ class _MainPage extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // 상단 로고
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: top(),
-            ),
-          ),
-          // 검색 필드
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: search(),
-            ),
-          ),
-          // 플레이어 목록
-          if (_playerSet.isNotEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: playerList(),
+      body: Stack(
+        children: [
+          // 실제 콘텐츠
+          CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: top(),
+                ),
               ),
-            ),
-          // 게임 리스트
-          if (_games.isNotEmpty) gameList(),
-          // 하단 텍스트
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Center(
-                child: Text("Bottom"),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: search(),
+                ),
               ),
-            ),
+              if (_playerSet.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: playerList(),
+                  ),
+                ),
+              if (_games.isNotEmpty) gameList(),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Center(
+                    child: Text("Bottom"),
+                  ),
+                ),
+              ),
+            ],
           ),
+          // 로딩 팝업
+          if (_isLoading)
+            Stack(
+              children: [
+                ModalBarrier(
+                  dismissible: false,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+                Center(
+                  child: Container(
+                    width: 500,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "$_loadingDescription ($_currentIndex / $_totalSteps)",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Stack(
+                            children: [
+                              FractionallySizedBox(
+                                widthFactor: _totalSteps > 0
+                                    ? _currentIndex / _totalSteps
+                                    : 0,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -100,23 +160,6 @@ class _MainPage extends State<MainPage> {
           width: 250,
           fit: BoxFit.fill,
         ),
-      ],
-    );
-  }
-
-  Widget body() {
-    return Column(
-      children: [
-        const SizedBox(height: 16),
-        search(),
-        const SizedBox(height: 16),
-        if (_playerSet.isNotEmpty) playerList(),
-        const SizedBox(height: 16),
-        if (_games.isNotEmpty) gameList(),
-        const SizedBox(
-          height: 16,
-        ),
-        Text("Bottom")
       ],
     );
   }
@@ -149,7 +192,6 @@ class _MainPage extends State<MainPage> {
                     setState(() {
                       expandedState[index] = !isExpanded;
                     });
-                    _fetchGameSchema(game.appId);
                   },
                   child: Row(
                     children: [
@@ -186,7 +228,8 @@ class _MainPage extends State<MainPage> {
                               padding: const EdgeInsets.all(8),
                               child: Text(
                                 "Achievements:",
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                             ),
                             ListView.builder(
@@ -195,10 +238,22 @@ class _MainPage extends State<MainPage> {
                               itemCount: achievements.length,
                               itemBuilder: (context, index) {
                                 final achievement = achievements[index];
+                                final playersAchievement =
+                                    _playerAchievement[game.appId] ?? {};
+                                final bool achieved =
+                                    (playersAchievement[achievement.name] ??
+                                            -1) >
+                                        0;
+                                final String iconUrl = achieved
+                                    ? achievement.icon
+                                    : achievement.iconGray;
+
                                 return ListTile(
-                                  leading: Image.network(achievement.icon,),
+                                  key: ValueKey(
+                                      '${game.appId}-${achievement.name}'),
+                                  leading: Image.network(iconUrl),
                                   title: Text(achievement.displayName),
-                                  subtitle: Text(achievement.description ?? "no description"),
+                                  subtitle: Text(achievement.description),
                                 );
                               },
                             )
@@ -219,17 +274,19 @@ class _MainPage extends State<MainPage> {
       height: 250,
       child: ListView.builder(
         primary: false,
-        shrinkWrap: true,
+        //shrinkWrap: true,
         physics: const ClampingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemCount: _playerSet.length,
         itemBuilder: (context, index) {
           final player = _playerSet.elementAt(index);
           return GestureDetector(
-            onTap: () {
-              _handleFetchOwnedGames(player.steamId);
+            onTap: () async {
+              await _handleFetchOwnedGames(player.steamId);
               setState(() {
-                if (player.steamId != _steamId) expandedState.clear();
+                if (player.steamId != _steamId) {
+                  expandedState.clear();
+                }
                 _steamId = player.steamId;
               });
             },
@@ -278,16 +335,8 @@ class _MainPage extends State<MainPage> {
       const SizedBox(height: 16),
       ElevatedButton(
         onPressed: _handelFetchPlayerSummaries,
-        child: const Text('Fetch Data'),
+        child: const Text('Search'),
       ),
-      if (_errorMessage.isNotEmpty)
-        Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: Text(
-            _errorMessage,
-            style: const TextStyle(color: Colors.red),
-          ),
-        ),
     ]);
   }
 
@@ -300,9 +349,7 @@ class _MainPage extends State<MainPage> {
         _gameSchema[appId] = game;
       });
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-      });
+      print("fetch game schema: ${e.toString()}");
     }
   }
 
@@ -318,30 +365,36 @@ class _MainPage extends State<MainPage> {
         throw Exception('Vanity URL not resolved: ${data.success}');
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-      });
+      print("fetch steamId from vanity url : ${e.toString()}");
     }
     return null;
   }
 
-  Future<void> _handelFetchPlayerAchievements(String steamId, int appId) async {
+  Future<void> _handleFetchPlayerAchievements(String steamId, int appId) async {
     try {
-      final response = await _playerAchievementsUseCase.execute({
-        'key': widget.apiKey,
-        'steamid': steamId,
-        'appid': appId
-      });
+      final response = await _playerAchievementsUseCase
+          .execute({'key': widget.apiKey, 'steamid': steamId, 'appid': appId});
 
-      response.playerStats.achievements;
-    } catch (e) {
+      Map<String, int> achievementMap = {
+        for (var achievement in response.playerStats.achievements)
+          achievement.apiName: achievement.achieved
+      };
+
       setState(() {
-        _errorMessage = "player achievements ${e.toString()}";
+        _playerAchievement[appId] = achievementMap;
       });
+    } catch (e) {
+      print("player achievements: ${e.toString()}");
     }
   }
 
   Future<void> _handleFetchOwnedGames(String steamId) async {
+    setState(() {
+      _isLoading = true;
+      _currentIndex = 0;
+      _totalSteps = 0;
+    });
+
     try {
       final response = await _ownedGamesUseCase.execute({
         'key': widget.apiKey,
@@ -354,12 +407,30 @@ class _MainPage extends State<MainPage> {
           .toSet();
 
       setState(() {
+        _totalSteps = importantGames.length;
+      });
+
+      for (var i = 0; i < importantGames.length; i++) {
+        final game = importantGames.elementAt(i);
+
+        await _handleFetchPlayerAchievements(steamId, game.appId);
+        await _fetchGameSchema(game.appId);
+
+        setState(() {
+          _currentIndex = i + 1;
+          _loadingDescription = "Find ${game.name} achievements...";
+        });
+      }
+
+      setState(() {
         _games.clear();
         _games.addAll(importantGames);
       });
     } catch (e) {
+      print("owned games error: ${e.toString()}");
+    } finally {
       setState(() {
-        _errorMessage = "owned games error: ${e.toString()}";
+        _isLoading = false;
       });
     }
   }
@@ -393,12 +464,9 @@ class _MainPage extends State<MainPage> {
 
       setState(() {
         _playerSet.add(player);
-        _errorMessage = "";
       });
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-      });
+      print("fetch player summary: ${e.toString()}");
     }
     _controller.clear();
   }

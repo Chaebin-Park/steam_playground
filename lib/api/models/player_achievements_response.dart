@@ -33,21 +33,21 @@ class PlayerStats {
 }
 
 class PlayerAchievement {
-  final String apiname;
+  final String apiName;
   final int achieved;
-  final int unlocktime;
+  final int unLockTime;
 
   PlayerAchievement({
-    required this.apiname,
+    required this.apiName,
     required this.achieved,
-    required this.unlocktime,
+    required this.unLockTime,
   });
 
   factory PlayerAchievement.fromJson(Map<String, dynamic> json) {
     return PlayerAchievement(
-      apiname: json['apiname'],
+      apiName: json['apiname'],
       achieved: json['achieved'],
-      unlocktime: json['unlocktime'],
+      unLockTime: json['unlocktime'],
     );
   }
 }
