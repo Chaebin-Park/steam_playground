@@ -97,7 +97,7 @@ class _MainPage extends State<MainPage> {
               children: [
                 ModalBarrier(
                   dismissible: false,
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withAlpha(50),
                 ),
                 Center(
                   child: Container(
@@ -197,8 +197,8 @@ class _MainPage extends State<MainPage> {
                     children: [
                       Image.network(
                         getSteamImageUrl(game.appId),
-                        width: 50,
-                        height: 50,
+                        width: 100,
+                        height: 100,
                         fit: BoxFit.cover,
                       ),
                       const SizedBox(width: 8),
@@ -410,17 +410,25 @@ class _MainPage extends State<MainPage> {
         _totalSteps = importantGames.length;
       });
 
-      for (var i = 0; i < importantGames.length; i++) {
-        final game = importantGames.elementAt(i);
+      List<Future<void>> tasks = [];
+      int completedTasks = 0;
 
-        await _handleFetchPlayerAchievements(steamId, game.appId);
-        await _fetchGameSchema(game.appId);
+      for (var game in importantGames) {
+        tasks.add(Future(() async {
+          await _handleFetchPlayerAchievements(steamId, game.appId);
+          await _fetchGameSchema(game.appId);
 
-        setState(() {
-          _currentIndex = i + 1;
-          _loadingDescription = "Find ${game.name} achievements...";
-        });
+          // 진행 상황 업데이트
+          setState(() {
+            completedTasks++;
+            _currentIndex = completedTasks;
+            _loadingDescription = "Find ${game.name} achievements...";
+          });
+        }));
       }
+
+      // 병렬 작업이 모두 완료될 때까지 대기
+      await Future.wait(tasks);
 
       setState(() {
         _games.clear();

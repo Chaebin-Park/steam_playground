@@ -4,9 +4,8 @@ import 'package:steamplayground/common/my_custom_scroll_behavior.dart';
 import 'package:steamplayground/main_page.dart';
 
 void main() async {
-  await dotenv.load();
-  final String apiKey = dotenv.env['API_KEY'] ?? '';
-  print('API KEY: $apiKey');
+  await dotenv.load(fileName: 'assets/.env');
+  final String apiKey = dotenv.env['API_KEY']!;
   runApp(MyApp(apiKey: apiKey,));
 }
 
