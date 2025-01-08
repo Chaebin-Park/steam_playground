@@ -121,7 +121,7 @@ class _MainPage extends State<MainPage> {
     );
   }
 
-  String getSteamImageUrl(int appId, String imageHash) {
+  String getSteamImageUrl(int appId) {
     return 'https://cdn.cloudflare.steamstatic.com/steam/apps/$appId/header.jpg';
   }
 
@@ -154,7 +154,7 @@ class _MainPage extends State<MainPage> {
                   child: Row(
                     children: [
                       Image.network(
-                        getSteamImageUrl(game.appId, game.imgIconUrl),
+                        getSteamImageUrl(game.appId),
                         width: 50,
                         height: 50,
                         fit: BoxFit.cover,
@@ -296,8 +296,6 @@ class _MainPage extends State<MainPage> {
       final response = await _schemaForGameUseCase
           .execute({'key': widget.apiKey, 'appid': appId});
       final game = response.game;
-      print(
-          "${game.gameName}, ${game.gameVersion}, ${game.availableGameStats.achievements.length}");
       setState(() {
         _gameSchema[appId] = game;
       });
@@ -327,6 +325,22 @@ class _MainPage extends State<MainPage> {
     return null;
   }
 
+  Future<void> _handelFetchPlayerAchievements(String steamId, int appId) async {
+    try {
+      final response = await _playerAchievementsUseCase.execute({
+        'key': widget.apiKey,
+        'steamid': steamId,
+        'appid': appId
+      });
+
+      response.playerStats.achievements;
+    } catch (e) {
+      setState(() {
+        _errorMessage = "player achievements ${e.toString()}";
+      });
+    }
+  }
+
   Future<void> _handleFetchOwnedGames(String steamId) async {
     try {
       final response = await _ownedGamesUseCase.execute({
@@ -334,20 +348,18 @@ class _MainPage extends State<MainPage> {
         'steamid': steamId,
       });
 
-      final List<int> importantGames = _games
+      final Set<OwnedGame> importantGames = response.response.games
           .where((game) => game.playtimeForever > 600)
-          .map<int>((game) => game.appId)
-          .toSet()
-          .toList();
+          .map<OwnedGame>((game) => game)
+          .toSet();
 
       setState(() {
         _games.clear();
-        _games.addAll(response.response.games);
+        _games.addAll(importantGames);
       });
     } catch (e) {
       setState(() {
         _errorMessage = "owned games error: ${e.toString()}";
-        print(e);
       });
     }
   }
