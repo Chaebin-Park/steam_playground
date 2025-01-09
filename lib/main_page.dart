@@ -10,6 +10,7 @@ import 'package:steamplayground/api/usecase/player_achievements_usecase.dart';
 import 'package:steamplayground/api/usecase/player_summaries_usecase.dart';
 import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
 import 'package:steamplayground/api/usecase/schema_for_game_usecase.dart';
+import 'package:steamplayground/widget/player_card.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   final String apiKey;
@@ -220,8 +221,6 @@ class _MainPage extends ConsumerState<MainPage> {
 
   /// 아이템 클릭 처리
   void handleItemClick(OwnedGame game, int index, void Function(void Function()) setState) {
-    print("click!!");
-    print("state: ${_expandedState[index]}");
     setState(() {
       _expandedState[index] = !(_expandedState[index] ?? false);
     });
@@ -327,45 +326,15 @@ class _MainPage extends ConsumerState<MainPage> {
         itemCount: _playerSet.length,
         itemBuilder: (context, index) {
           final player = _playerSet.elementAt(index);
-          return GestureDetector(
-            onTap: () async {
-              await _handleFetchOwnedGames(player.steamId);
-              setState(() {
-                if (player.steamId != _steamId) {
-                  _expandedState.clear();
-                }
-                _steamId = player.steamId;
-              });
-            },
-            child: Card(
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              margin: EdgeInsets.all(8),
-              child: Container(
-                width: 200,
-                margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.network(player.avatarFull),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Center(
-                        child: Text(
-                          player.personaName,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ]),
-              ),
-            ),
-          );
+          return PlayerCard(player: player, onTap: () async {
+            await _handleFetchOwnedGames(player.steamId);
+            setState(() {
+              if (player.steamId != _steamId) {
+                _expandedState.clear();
+              }
+              _steamId = player.steamId;
+            });
+          });
         },
       ),
     );
@@ -382,7 +351,10 @@ class _MainPage extends ConsumerState<MainPage> {
       ),
       const SizedBox(height: 16),
       ElevatedButton(
-        onPressed: _handelFetchPlayerSummaries,
+        onPressed: () {
+          _handelFetchPlayerSummaries(_controller.text);
+          _controller.clear();
+          },
         child: const Text('Search'),
       ),
     ]);
@@ -494,8 +466,7 @@ class _MainPage extends ConsumerState<MainPage> {
     }
   }
 
-  Future<void> _handelFetchPlayerSummaries() async {
-    final url = _controller.text;
+  Future<void> _handelFetchPlayerSummaries(String url) async {
     String? steamId;
     if (url.contains('/profiles/')) {
       // Steam ID가 URL에 포함된 경우
@@ -527,6 +498,5 @@ class _MainPage extends ConsumerState<MainPage> {
     } catch (e) {
       print("fetch player summary: ${e.toString()}");
     }
-    _controller.clear();
   }
 }
