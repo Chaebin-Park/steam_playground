@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/api/api_client.dart';
 import 'package:steamplayground/api/models/owned_games_response.dart';
 import 'package:steamplayground/api/models/player_summaries_response.dart';
@@ -10,16 +11,16 @@ import 'package:steamplayground/api/usecase/player_summaries_usecase.dart';
 import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
 import 'package:steamplayground/api/usecase/schema_for_game_usecase.dart';
 
-class MainPage extends StatefulWidget {
+class MainPage extends ConsumerStatefulWidget {
   final String apiKey;
 
   const MainPage({super.key, required this.apiKey});
 
   @override
-  State<StatefulWidget> createState() => _MainPage();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MainPage();
 }
 
-class _MainPage extends State<MainPage> {
+class _MainPage extends ConsumerState<MainPage> {
   late final ApiClient _apiClient;
   late final SteamRepositoryImpl _repository;
   late final PlayerSummariesUseCase _getPlayerSummariesUseCase;
@@ -52,7 +53,6 @@ class _MainPage extends State<MainPage> {
         PlayerAchievementsUseCase(repository: _repository);
     _schemaForGameUseCase = SchemaForGameUseCase(repository: _repository);
   }
-
 
   @override
   Widget build(BuildContext context) {

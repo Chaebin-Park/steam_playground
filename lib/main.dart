@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/common/my_custom_scroll_behavior.dart';
 import 'package:steamplayground/main_page.dart';
 
 void main() async {
   await dotenv.load(fileName: 'assets/.env');
   final String apiKey = dotenv.env['API_KEY']!;
-  runApp(MyApp(apiKey: apiKey,));
+  //runApp(MyApp(apiKey: apiKey,));
+  runApp(ProviderScope(child: MyApp(apiKey: apiKey)));
 }
 
 class MyApp extends StatelessWidget {
