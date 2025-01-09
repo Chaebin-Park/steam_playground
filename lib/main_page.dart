@@ -12,7 +12,7 @@ import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
 import 'package:steamplayground/api/usecase/schema_for_game_usecase.dart';
 import 'package:steamplayground/widget/game_list.dart';
 import 'package:steamplayground/widget/player_list.dart';
-import 'package:steamplayground/widget/search.dart';
+import 'package:steamplayground/widget/search_widget.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   final String apiKey;
@@ -31,7 +31,6 @@ class _MainPage extends ConsumerState<MainPage> {
   late final PlayerAchievementsUseCase _playerAchievementsUseCase;
   late final SchemaForGameUseCase _schemaForGameUseCase;
   late final OwnedGamesUseCase _ownedGamesUseCase;
-  final TextEditingController _controller = TextEditingController();
   final Set<Player> _playerSet = {};
   final Set<OwnedGame> _games = {};
   final Map<int, Map<String, int>> _playerAchievement = {};
