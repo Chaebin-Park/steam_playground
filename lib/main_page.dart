@@ -11,6 +11,7 @@ import 'package:steamplayground/api/usecase/player_summaries_usecase.dart';
 import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
 import 'package:steamplayground/api/usecase/schema_for_game_usecase.dart';
 import 'package:steamplayground/widget/game_list.dart';
+import 'package:steamplayground/widget/loading_overlay.dart';
 import 'package:steamplayground/widget/player_list.dart';
 import 'package:steamplayground/widget/search_widget.dart';
 
@@ -72,60 +73,11 @@ class _MainPage extends ConsumerState<MainPage> {
           ),
           // 로딩 팝업
           if (_isLoading)
-            Stack(
-              children: [
-                ModalBarrier(
-                  dismissible: false,
-                  color: Colors.black.withAlpha(50),
-                ),
-                Center(
-                  child: Container(
-                    width: 500,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "$_loadingDescription ($_currentIndex / $_totalSteps)",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          width: double.infinity,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Stack(
-                            children: [
-                              FractionallySizedBox(
-                                widthFactor: _totalSteps > 0
-                                    ? _currentIndex / _totalSteps
-                                    : 0,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            LoadingOverlay(
+                isLoading: _isLoading,
+                description: _loadingDescription,
+                currentIndex: _currentIndex,
+                totalSteps: _totalSteps)
         ],
       ),
     );
