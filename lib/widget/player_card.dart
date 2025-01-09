@@ -1,19 +1,23 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:steamplayground/api/models/player_summaries_response.dart';
 
 class PlayerCard extends StatelessWidget {
   final Player player;
+  final bool isSelected;
   final VoidCallback onTap;
 
-  const PlayerCard({super.key, required this.player, required this.onTap});
+  const PlayerCard(
+      {super.key,
+      required this.player,
+      required this.isSelected,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        color: Colors.white,
+        color: isSelected ? Colors.blue[50] : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

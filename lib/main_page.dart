@@ -11,7 +11,7 @@ import 'package:steamplayground/api/usecase/player_summaries_usecase.dart';
 import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
 import 'package:steamplayground/api/usecase/schema_for_game_usecase.dart';
 import 'package:steamplayground/widget/game_list.dart';
-import 'package:steamplayground/widget/player_card.dart';
+import 'package:steamplayground/widget/player_list.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   final String apiKey;
@@ -76,13 +76,7 @@ class _MainPage extends ConsumerState<MainPage> {
                   child: search(),
                 ),
               ),
-              if (_playerSet.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: playerList(),
-                  ),
-                ),
+              if (_playerSet.isNotEmpty) playerList(),
               if (_games.isNotEmpty) gameList(),
               SliverToBoxAdapter(
                 child: Padding(
@@ -184,28 +178,18 @@ class _MainPage extends ConsumerState<MainPage> {
   }
 
   Widget playerList() {
-    return SizedBox(
-      height: 250,
-      child: ListView.builder(
-        primary: false,
-        physics: const ClampingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        itemCount: _playerSet.length,
-        itemBuilder: (context, index) {
-          final player = _playerSet.elementAt(index);
-          return PlayerCard(
-              player: player,
-              onTap: () async {
-                await _handleFetchOwnedGames(player.steamId);
-                setState(() {
-                  if (player.steamId != _steamId) {
-                    _expandedState.clear();
-                  }
-                  _steamId = player.steamId;
-                });
-              });
-        },
-      ),
+    return PlayerList(
+      players: _playerSet,
+      currentSteamId: _steamId,
+      onPlayerSelected: (steamId) async {
+        await _handleFetchOwnedGames(steamId);
+        setState(() {
+          if (steamId != _steamId) {
+            _expandedState.clear();
+          }
+          _steamId = steamId;
+        });
+      },
     );
   }
 
