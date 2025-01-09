@@ -1,28 +1,28 @@
 class SchemaForGameResponse {
-  final SchemaGame game;
+  final GameSchema game;
 
   SchemaForGameResponse({required this.game});
 
   factory SchemaForGameResponse.fromJson(Map<String, dynamic> json) {
     return SchemaForGameResponse(
-      game: SchemaGame.fromJson(json['game']),
+      game: GameSchema.fromJson(json['game']),
     );
   }
 }
 
-class SchemaGame {
+class GameSchema {
   final String? gameName;
   final String gameVersion;
   final AvailableGameStats availableGameStats;
 
-  SchemaGame({
+  GameSchema({
     required this.gameName,
     required this.gameVersion,
     required this.availableGameStats,
   });
 
-  factory SchemaGame.fromJson(Map<String, dynamic> json) {
-    return SchemaGame(
+  factory GameSchema.fromJson(Map<String, dynamic> json) {
+    return GameSchema(
       gameName: json['gameName'],
       gameVersion: json['gameVersion'],
       availableGameStats: AvailableGameStats.fromJson(json['availableGameStats']),
@@ -32,7 +32,7 @@ class SchemaGame {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is SchemaGame && other.gameName == gameName;
+    return other is GameSchema && other.gameName == gameName;
   }
 
   @override
