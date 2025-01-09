@@ -12,6 +12,7 @@ import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
 import 'package:steamplayground/api/usecase/schema_for_game_usecase.dart';
 import 'package:steamplayground/widget/game_list.dart';
 import 'package:steamplayground/widget/player_list.dart';
+import 'package:steamplayground/widget/search.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   final String apiKey;
@@ -64,28 +65,10 @@ class _MainPage extends ConsumerState<MainPage> {
           // 실제 콘텐츠
           CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: top(),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: search(),
-                ),
-              ),
+              top(),
+              search(),
               if (_playerSet.isNotEmpty) playerList(),
               if (_games.isNotEmpty) gameList(),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Center(
-                    child: Text("Bottom"),
-                  ),
-                ),
-              ),
             ],
           ),
           // 로딩 팝업
@@ -150,14 +133,19 @@ class _MainPage extends ConsumerState<MainPage> {
   }
 
   Widget top() {
-    return Row(
-      children: [
-        Image.asset(
-          'assets/images/img_steam_logo_black.png',
-          width: 250,
-          fit: BoxFit.fill,
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Image.asset(
+              'assets/images/img_steam_logo_black.png',
+              width: 250,
+              fit: BoxFit.fill,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -194,23 +182,9 @@ class _MainPage extends ConsumerState<MainPage> {
   }
 
   Widget search() {
-    return Column(children: [
-      TextField(
-        controller: _controller,
-        decoration: const InputDecoration(
-          labelText: 'Enter Steam Profile URL',
-          border: OutlineInputBorder(),
-        ),
-      ),
-      const SizedBox(height: 16),
-      ElevatedButton(
-        onPressed: () {
-          _handelFetchPlayerSummaries(_controller.text);
-          _controller.clear();
-        },
-        child: const Text('Search'),
-      ),
-    ]);
+    return SearchWidget(onPressed: (url) async {
+      await _handelFetchPlayerSummaries(url);
+    });
   }
 
   Future<void> _fetchGameSchema(int appId) async {
