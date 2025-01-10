@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:steamplayground/api/models/owned_games_response.dart';
-import 'package:steamplayground/api/models/schema_for_game_response.dart';
 import 'package:steamplayground/riverpod/provider.dart';
 import 'package:steamplayground/widget/game_item.dart';
 
@@ -46,6 +44,8 @@ class GameList extends ConsumerWidget {
     final gameState = ref.watch(gameViewModelProvider);
     final gameViewModel = ref.read(gameViewModelProvider.notifier);
 
+    print("6. Game");
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
             (context, index) {
@@ -58,10 +58,16 @@ class GameList extends ConsumerWidget {
             game: game,
             isExpanded: isExpanded,
             achievements: achievements,
+            onItemClick: () {
+              gameViewModel.fetchGameDetails(game.appId);
+              gameViewModel.toggleExpandedState(index);
+            },
+            /**
             onItemClick: () => gameViewModel.fetchGameDetails(
               'STEAM_ID', // 실제 스팀 ID 사용
               game.appId,
             ),
+                **/
           );
         },
         childCount: gameState.gameDataState.games.length,

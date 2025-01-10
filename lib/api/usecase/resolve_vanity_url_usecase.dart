@@ -6,15 +6,18 @@ import 'package:steamplayground/api/usecase/usecase.dart';
 class ResolveVanityURLUseCase
     implements UseCase<ResolveVanityURLResponse, ResolveVanityURLParams> {
   final SteamRepository repository;
+  final String apiKey;
 
-  ResolveVanityURLUseCase({required this.repository});
+  ResolveVanityURLUseCase({required this.repository, required this.apiKey});
 
   @override
   Future<ResolveVanityURLResponse> execute(
       ResolveVanityURLParams params) async {
-    final response = await repository.fetchData(
-        endpointKey: 'resolveVanityURL',
-        queryParameters: params.toQueryParameters());
+    final response = await repository
+        .fetchData(endpointKey: 'resolveVanityURL', queryParameters: {
+      ...params.toQueryParameters(),
+      'key': apiKey,
+    });
 
     return ResolveVanityURLResponse.fromJson(response);
   }

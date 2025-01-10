@@ -110,6 +110,11 @@ class GameItem extends StatelessWidget {
         onTap: onItemClick,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: isExpanded ? [BoxShadow(color: Colors.black.withAlpha(10), offset: Offset(0, 2), blurRadius: 4)] : [],
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -122,12 +127,26 @@ class GameItem extends StatelessWidget {
     );
   }
 
+
   Widget _buildGameRow(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          Text(game.name),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.3,
+            child: Image.network(
+              'https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appId}/header.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              game.name,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
           Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
         ],
       ),

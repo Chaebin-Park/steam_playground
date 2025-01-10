@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:steamplayground/api/models/player_summaries_response.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:steamplayground/riverpod/provider.dart';
 import 'package:steamplayground/widget/player_card.dart';
 
+/**
 class PlayerList extends StatelessWidget {
   final Set<Player> players;
   final String currentSteamId;
@@ -33,3 +36,42 @@ class PlayerList extends StatelessWidget {
     );
   }
 }
+    **/
+
+class PlayerList extends ConsumerWidget {
+  const PlayerList({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final playerState = ref.watch(playerViewModelProvider);
+    final playerViewModel = ref.read(playerViewModelProvider.notifier);
+    final gameViewModel = ref.read(gameViewModelProvider.notifier);
+
+    print("5. Player");
+    if (playerState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: 250,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: playerState.players.length,
+          itemBuilder: (context, index) {
+            final player = playerState.players.elementAt(index);
+            return PlayerCard(
+              player: player,
+              isSelected: player.steamId == playerState.selectedSteamId,
+              onTap: () {
+                playerViewModel.selectPlayer(player.steamId);
+                gameViewModel.fetchOwnedGames(player.steamId);
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+

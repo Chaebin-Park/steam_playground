@@ -3,16 +3,21 @@ import 'package:steamplayground/api/param/owned_games_params.dart';
 import 'package:steamplayground/api/repository/steam_repository.dart';
 import 'package:steamplayground/api/usecase/usecase.dart';
 
-class OwnedGamesUseCase implements UseCase<OwnedGamesResponse, OwnedGamesParams> {
+class OwnedGamesUseCase
+    implements UseCase<OwnedGamesResponse, OwnedGamesParams> {
   final SteamRepository repository;
+  final String apiKey;
 
-  OwnedGamesUseCase({required this.repository});
+  OwnedGamesUseCase({required this.repository, required this.apiKey});
 
   @override
   Future<OwnedGamesResponse> execute(OwnedGamesParams params) async {
     final response = await repository.fetchData(
       endpointKey: 'getOwnedGames',
-      queryParameters: params.toQueryParameters(),
+      queryParameters: {
+        ...params.toQueryParameters(),
+        'key': apiKey,
+      },
     );
 
     return OwnedGamesResponse.fromJson(response);
