@@ -8,7 +8,6 @@ class GameList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerState = ref.watch(playerViewModelProvider);
     final gameState = ref.watch(gameViewModelProvider);
     final gameViewModel = ref.read(gameViewModelProvider.notifier);
 
@@ -25,8 +24,8 @@ class GameList extends ConsumerWidget {
             isExpanded: isExpanded,
             achievements: achievements,
             onItemClick: () {
-              final steamId = playerState.selectedSteamId; // 실제 스팀 ID 사용
-              gameViewModel.fetchGameDetails(steamId.toString(), game.appId);
+              //final steamId = playerState.selectedSteamId; // 실제 스팀 ID 사용
+              //gameViewModel.fetchGameDetails(steamId.toString(), game.appId);
               gameViewModel.toggleExpandedState(game.appId);
             },
           );

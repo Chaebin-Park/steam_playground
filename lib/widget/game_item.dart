@@ -20,7 +20,7 @@ class GameItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: GestureDetector(
         onTap: onItemClick,
         child: AnimatedContainer(

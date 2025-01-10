@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/api/models/achievement_with_status.dart';
+import 'package:steamplayground/api/models/owned_games_response.dart';
 import 'package:steamplayground/api/param/owned_games_params.dart';
 import 'package:steamplayground/api/param/player_archievements_params.dart';
 import 'package:steamplayground/api/param/schema_for_game_params.dart';
@@ -44,9 +45,33 @@ class GameViewModel extends StateNotifier<CombinedState> {
         OwnedGamesParams(steamId: steamId),
       );
 
+      final Set<OwnedGame> importantGames = response.response.games
+          .where((game) => game.playtimeForever > 600)
+          .map<OwnedGame>((game) => game)
+          .toSet();
+
+      List<Future<void>> tasks = [];
+      int completedTasks = 0;
+      for (int i = 0; i < importantGames.length; i++) {
+        tasks.add(Future(() async {
+          OwnedGame game = importantGames.elementAt(i);
+          await _fetchGameDetails(steamId, game.appId);
+          completedTasks++;
+          state = state.copyWith(
+            loadingState: state.loadingState.copyWith(
+                isLoading: true,
+                description: "Fetching ${game.name}...",
+                currentIndex: completedTasks,
+                totalSteps: importantGames.length
+            ),
+          );
+        }));
+      }
+      await Future.wait(tasks);
+
       state = state.copyWith(
         gameDataState: state.gameDataState.copyWith(
-          games: response.response.games,
+          games: importantGames.toList(),
           expandedState: {},
         ),
         loadingState: state.loadingState.copyWith(isLoading: false),
@@ -62,7 +87,7 @@ class GameViewModel extends StateNotifier<CombinedState> {
   }
 
   /// 게임 세부 정보 가져오기
-  Future<void> fetchGameDetails(String steamId, int appId) async {
+  Future<void> _fetchGameDetails(String steamId, int appId) async {
     try {
       // 스키마 업적 데이터 가져오기
       final schemaResponse = await _schemaForGameUseCase.execute(
