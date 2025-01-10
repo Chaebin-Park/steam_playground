@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:steamplayground/api/models/owned_games_response.dart';
 import 'package:steamplayground/api/models/schema_for_game_response.dart';
+import 'dart:math' as math;
 
 class GameItem extends StatelessWidget {
   final OwnedGame game;
@@ -49,12 +50,17 @@ class GameItem extends StatelessWidget {
   }
 
   Widget _buildGameRow(BuildContext context) {
+    double imageWidth = math.min(
+      MediaQuery.of(context).size.width * 0.3, // 현재 계산된 크기
+      200, // 최대 크기 제한
+    );
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.3,
+            width: imageWidth,
             child: Image.network(
               'https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appId}/header.jpg',
               fit: BoxFit.cover,
