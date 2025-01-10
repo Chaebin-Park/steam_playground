@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:steamplayground/api/models/owned_games_response.dart';
+import 'package:steamplayground/api/models/achievement_with_status.dart';
 import 'package:steamplayground/api/param/owned_games_params.dart';
+import 'package:steamplayground/api/param/player_archievements_params.dart';
 import 'package:steamplayground/api/param/schema_for_game_params.dart';
 import 'package:steamplayground/api/usecase/owned_games_usecase.dart';
 import 'package:steamplayground/api/usecase/player_achievements_usecase.dart';
@@ -43,33 +44,13 @@ class GameViewModel extends StateNotifier<CombinedState> {
         OwnedGamesParams(steamId: steamId),
       );
 
-      final expandedState =
-          List<bool>.filled(response.response.games.length, false);
-
       state = state.copyWith(
         gameDataState: state.gameDataState.copyWith(
           games: response.response.games,
-          expandedState: expandedState,
+          expandedState: {},
         ),
         loadingState: state.loadingState.copyWith(isLoading: false),
       );
-
-      /**
-      for (int i = 0; i < response.response.gameCount; i++) {
-        OwnedGame game = response.response.games[i];
-
-        state = state.copyWith(
-          loadingState: state.loadingState.copyWith(
-            isLoading: true,
-            description: "${game.name} loading...",
-            currentIndex: i,
-            totalSteps: response.response.gameCount
-          ),
-        );
-        await fetchGameDetails(steamId, game.appId);
-      }
-          **/
-
     } catch (e) {
       state = state.copyWith(
         loadingState: state.loadingState.copyWith(
@@ -81,52 +62,64 @@ class GameViewModel extends StateNotifier<CombinedState> {
   }
 
   /// 게임 세부 정보 가져오기
-  Future<void> fetchGameDetails(int appId) async {
-    // 게임 확장 상태 변경
-    final expandedState = List<bool>.from(state.gameDataState.expandedState);
-    final isExpanded = expandedState[appId];
-    expandedState[appId] = !isExpanded;
+  Future<void> fetchGameDetails(String steamId, int appId) async {
+    try {
+      // 스키마 업적 데이터 가져오기
+      final schemaResponse = await _schemaForGameUseCase.execute(
+        SchemaForGameParams(appId: appId),
+      );
 
-    state = state.copyWith(
-      gameDataState: state.gameDataState.copyWith(expandedState: expandedState),
-    );
+      // 플레이어 업적 데이터 가져오기
+      final playerAchievementsResponse = await _playerAchievementsUseCase.execute(
+        PlayerAchievementsParams(steamId: steamId, appId: appId),
+      );
 
-    // 확장된 상태에서만 세부 정보 로드
-    if (!isExpanded) {
-      try {
-        final schemaResponse = await _schemaForGameUseCase.execute(
-          SchemaForGameParams(appId: appId),
-        );
+      // 플레이어 업적을 맵으로 변환
+      final playerAchievementMap = {
+        for (var achievement in playerAchievementsResponse.playerStats.achievements)
+          achievement.apiName: achievement.achieved > 0,
+      };
 
-        state = state.copyWith(
-          gameDataState: state.gameDataState.copyWith(
-            schema: schemaResponse.game, // 단일 schema 업데이트
-          ),
+      // 병합된 업적 리스트 생성
+      final mergedAchievements = schemaResponse.game.availableGameStats.achievements.map((achievement) {
+        final isAchieved = playerAchievementMap[achievement.name] ?? false;
+
+        return AchievementWithStatus(
+          name: achievement.name,
+          displayName: achievement.displayName,
+          description: achievement.description,
+          icon: isAchieved ? achievement.icon : achievement.iconGray,
+          isAchieved: isAchieved,
         );
-      } catch (e) {
-        // 에러 처리
-        state = state.copyWith(
-          loadingState: state.loadingState.copyWith(
-            description: "Failed to load game details: $e",
-          ),
-        );
-      }
+      }).toList();
+
+      // 상태 업데이트
+      state = state.copyWith(
+        gameDataState: state.gameDataState.copyWith(
+          schema: schemaResponse.game,
+          achievements: mergedAchievements,
+        ),
+      );
+    } catch (e) {
+      state = state.copyWith(
+        loadingState: state.loadingState.copyWith(
+          description: "Failed to load game details: $e",
+        ),
+      );
     }
   }
 
   /// 게임 확장 상태 토글
-  void toggleExpandedState(int index) {
-    final expandedState = List<bool>.from(state.gameDataState.expandedState);
-
-    if (index >= expandedState.length) {
-      expandedState.addAll(List<bool>.filled(index - expandedState.length + 1, false));
-    }
-
-    expandedState[index] = !expandedState[index];
+  void toggleExpandedState(int appId) {
+    final currentExpandedState = state.gameDataState.expandedState;
+    final isExpanded = currentExpandedState[appId] ?? false;
 
     state = state.copyWith(
       gameDataState: state.gameDataState.copyWith(
-        expandedState: expandedState,
+        expandedState: {
+          ...currentExpandedState,
+          appId: !isExpanded, // 토글 상태 업데이트
+        },
       ),
     );
   }

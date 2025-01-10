@@ -77,4 +77,20 @@ class SchemaAchievement {
       iconGray: json['icongray'],
     );
   }
+
+  SchemaAchievement copyWith({
+    String? name,
+    String? displayName,
+    String? description,
+    String? icon,
+    String? iconGray,
+  }) {
+    return SchemaAchievement(
+      name: name ?? this.name,
+      displayName: displayName ?? this.displayName,
+      description: description ?? this.description,
+      icon: icon ?? this.icon,
+      iconGray: iconGray ?? this.iconGray,
+    );
+  }
 }

@@ -10,7 +10,6 @@ class SearchWidget extends ConsumerWidget {
     final playerViewModel = ref.read(playerViewModelProvider.notifier);
     final TextEditingController textController = TextEditingController();
 
-    print("4. search");
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -19,7 +18,6 @@ class SearchWidget extends ConsumerWidget {
             controller: textController,
             onSubmitted: (url) async {
               if (url.isNotEmpty) {
-                print("submitted: $url");
                 await playerViewModel.fetchPlayerSummaries(url);
               }
             },
@@ -31,7 +29,6 @@ class SearchWidget extends ConsumerWidget {
                 onPressed: () async {
                   final url = textController.text;
                   if (url.isNotEmpty) {
-                    print("onPressed: $url");
                     await playerViewModel.fetchPlayerSummaries(url);
                   }
                 },

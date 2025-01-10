@@ -1,24 +1,24 @@
+import 'package:steamplayground/api/models/achievement_with_status.dart';
 import 'package:steamplayground/api/models/owned_games_response.dart';
-import 'package:steamplayground/api/models/player_achievements_response.dart';
 import 'package:steamplayground/api/models/schema_for_game_response.dart';
 
 class GameDataState {
   final List<OwnedGame> games;
-  final List<bool> expandedState;
-  final List<PlayerAchievement> achievements;
-  final GameSchema? schema; // GameSchema로 변경
+  final Map<int, bool> expandedState;
+  final List<AchievementWithStatus> achievements;
+  final GameSchema? schema;
 
   const GameDataState({
     this.games = const [],
-    this.expandedState = const [],
+    this.expandedState = const {},
     this.achievements = const [],
     this.schema,
   });
 
   GameDataState copyWith({
     List<OwnedGame>? games,
-    List<bool>? expandedState,
-    List<PlayerAchievement>? achievements,
+    Map<int, bool>? expandedState,
+    List<AchievementWithStatus>? achievements,
     GameSchema? schema,
   }) {
     return GameDataState(

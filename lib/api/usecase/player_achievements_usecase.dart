@@ -13,14 +13,18 @@ class PlayerAchievementsUseCase
   @override
   Future<PlayerAchievementsResponse> execute(
       PlayerAchievementsParams params) async {
-    final response = await repository.fetchData(
-      endpointKey: 'getPlayerAchievements',
-      queryParameters: {
-        ...params.toQueryParameters(),
-        'key': apiKey,
-      },
-    );
+    try {
+      final response = await repository.fetchData(
+        endpointKey: 'getPlayerAchievements',
+        queryParameters: {
+          ...params.toQueryParameters(),
+          'key': apiKey,
+        },
+      );
 
-    return PlayerAchievementsResponse.fromJson(response);
+      return PlayerAchievementsResponse.fromJson(response);
+    } catch(e) {
+      return PlayerAchievementsResponse.fromJson({});
+    }
   }
 }

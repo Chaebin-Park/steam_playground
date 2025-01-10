@@ -15,8 +15,6 @@ class MainPage extends ConsumerWidget {
     final playerState = ref.watch(playerViewModelProvider);
     final gameState = ref.watch(gameViewModelProvider);
 
-    print("1.");
-
     return Scaffold(
       body: Stack(
         children: [
@@ -25,8 +23,8 @@ class MainPage extends ConsumerWidget {
             slivers: [
               top(),
               const SearchWidget(), // 검색 위젯
-              if (playerState.players.isNotEmpty) const PlayerList(), // 플레이어 리스트
-              if (gameState.gameDataState.games.isNotEmpty) const GameList(), // 게임 리스트
+              if (playerState.players.isNotEmpty) PlayerList(), // 플레이어 리스트
+              if (gameState.gameDataState.games.isNotEmpty) GameList(), // 게임 리스트
             ],
           ),
           // 로딩 팝업
@@ -43,7 +41,6 @@ class MainPage extends ConsumerWidget {
   }
 
   Widget top() {
-    print("3. top");
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),

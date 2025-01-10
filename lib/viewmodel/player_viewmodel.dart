@@ -41,14 +41,10 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
         throw Exception('Invalid URL');
       }
 
-      print("steamId: $steamId");
-
       // 플레이어 정보 가져오기
       final response = await playerSummariesUseCase.execute(
         PlayerSummariesParams(steamId: steamId),
       );
-
-      print("response: ${response.response.players[0].personaName}");
 
       state = state.copyWith(
         players: {...state.players, response.response.players.first},
