@@ -29,12 +29,7 @@ class MainPage extends ConsumerWidget {
           ),
           // 로딩 팝업
           if (gameState.loadingState.isLoading)
-            LoadingOverlay(
-              isLoading: gameState.loadingState.isLoading,
-              description: gameState.loadingState.description,
-              currentIndex: gameState.loadingState.currentIndex,
-              totalSteps: gameState.loadingState.totalSteps,
-            ),
+            LoadingOverlay(loadingState: gameState.loadingState,),
         ],
       ),
     );

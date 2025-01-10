@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:steamplayground/riverpod/loading_state.dart';
 
 class LoadingOverlay extends StatelessWidget {
-  final bool isLoading;
-  final String description;
-  final int currentIndex;
-  final int totalSteps;
+  final LoadingState loadingState;
 
   const LoadingOverlay(
       {super.key,
-      required this.isLoading,
-      required this.description,
-      required this.currentIndex,
-      required this.totalSteps});
+      required this.loadingState});
 
   @override
   Widget build(BuildContext context) {
-    if (!isLoading) return SizedBox.shrink();
+    if (!loadingState.isLoading) return SizedBox.shrink();
 
     return Stack(
       children: [
@@ -43,7 +38,7 @@ class LoadingOverlay extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "$description ($currentIndex / $totalSteps)",
+          "$loadingState.description (${loadingState.currentIndex} / ${loadingState.totalSteps})",
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -58,7 +53,7 @@ class LoadingOverlay extends StatelessWidget {
           child: Stack(
             children: [
               FractionallySizedBox(
-                widthFactor: totalSteps > 0 ? currentIndex / totalSteps : 0,
+                widthFactor: loadingState.totalSteps > 0 ? loadingState.currentIndex / loadingState.totalSteps : 0,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.blue,
