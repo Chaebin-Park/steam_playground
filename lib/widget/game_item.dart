@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:steamplayground/api/models/achievement_with_status.dart';
 import 'package:steamplayground/api/models/owned_games_response.dart';
-import 'package:steamplayground/api/models/schema_for_game_response.dart';
 import 'dart:math' as math;
 
 class GameItem extends StatelessWidget {
   final OwnedGame game;
   final bool isExpanded;
-  final List<SchemaAchievement> achievements;
+  final List<AchievementWithStatus> achievements;
   final VoidCallback onItemClick;
 
   const GameItem({
@@ -28,14 +28,6 @@ class GameItem extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: isExpanded
-                ? [
-                    BoxShadow(
-                        color: Colors.black.withAlpha(10),
-                        offset: Offset(0, 2),
-                        blurRadius: 4)
-                  ]
-                : [],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

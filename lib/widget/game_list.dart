@@ -15,17 +15,14 @@ class GameList extends ConsumerWidget {
       delegate: SliverChildBuilderDelegate(
             (context, index) {
           final game = gameState.gameDataState.games[index];
-          final isExpanded = gameState.gameDataState.expandedState[index] ?? false;
-          final schema = gameState.gameDataState.schema; // 단일 schema 사용
-          final achievements = schema?.availableGameStats.achievements ?? [];
+          final isExpanded = gameState.gameDataState.expandedState[game.appId] ?? false;
+          final achievements = gameState.gameDataState.achievements[game.appId];
 
           return GameItem(
             game: game,
             isExpanded: isExpanded,
-            achievements: achievements,
+            achievements: achievements ?? [],
             onItemClick: () {
-              //final steamId = playerState.selectedSteamId; // 실제 스팀 ID 사용
-              //gameViewModel.fetchGameDetails(steamId.toString(), game.appId);
               gameViewModel.toggleExpandedState(game.appId);
             },
           );

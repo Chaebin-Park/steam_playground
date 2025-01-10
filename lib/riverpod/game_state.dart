@@ -5,20 +5,20 @@ import 'package:steamplayground/api/models/schema_for_game_response.dart';
 class GameDataState {
   final List<OwnedGame> games;
   final Map<int, bool> expandedState;
-  final List<AchievementWithStatus> achievements;
+  final Map<int, List<AchievementWithStatus>> achievements;
   final GameSchema? schema;
 
   const GameDataState({
     this.games = const [],
     this.expandedState = const {},
-    this.achievements = const [],
+    this.achievements = const {},
     this.schema,
   });
 
   GameDataState copyWith({
     List<OwnedGame>? games,
     Map<int, bool>? expandedState,
-    List<AchievementWithStatus>? achievements,
+    Map<int, List<AchievementWithStatus>>? achievements,
     GameSchema? schema,
   }) {
     return GameDataState(

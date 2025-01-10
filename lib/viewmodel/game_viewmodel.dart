@@ -8,8 +8,6 @@ import 'package:steamplayground/api/usecase/owned_games_usecase.dart';
 import 'package:steamplayground/api/usecase/player_achievements_usecase.dart';
 import 'package:steamplayground/api/usecase/schema_for_game_usecase.dart';
 import 'package:steamplayground/riverpod/combined_state.dart';
-import 'package:steamplayground/riverpod/game_state.dart';
-import 'package:steamplayground/riverpod/loading_state.dart';
 
 class GameViewModel extends StateNotifier<CombinedState> {
   final OwnedGamesUseCase _ownedGamesUseCase;
@@ -24,12 +22,6 @@ class GameViewModel extends StateNotifier<CombinedState> {
         _playerAchievementsUseCase = playerAchievementsUseCase,
         _ownedGamesUseCase = ownedGamesUseCase,
         super(CombinedState());
-
-  @override
-  CombinedState get state => CombinedState(
-        gameDataState: GameDataState(), // 초기화
-        loadingState: LoadingState(), // 초기화
-      );
 
   /// 게임 리스트 가져오기
   Future<void> fetchOwnedGames(String steamId) async {
@@ -49,6 +41,7 @@ class GameViewModel extends StateNotifier<CombinedState> {
           .where((game) => game.playtimeForever > 600)
           .map<OwnedGame>((game) => game)
           .toSet();
+      final Map<int, bool> expandedState = {};
 
       List<Future<void>> tasks = [];
       int completedTasks = 0;
@@ -57,13 +50,13 @@ class GameViewModel extends StateNotifier<CombinedState> {
           OwnedGame game = importantGames.elementAt(i);
           await _fetchGameDetails(steamId, game.appId);
           completedTasks++;
+          expandedState[game.appId] = false;
           state = state.copyWith(
             loadingState: state.loadingState.copyWith(
                 isLoading: true,
                 description: "Fetching ${game.name}...",
                 currentIndex: completedTasks,
-                totalSteps: importantGames.length
-            ),
+                totalSteps: importantGames.length),
           );
         }));
       }
@@ -72,7 +65,7 @@ class GameViewModel extends StateNotifier<CombinedState> {
       state = state.copyWith(
         gameDataState: state.gameDataState.copyWith(
           games: importantGames.toList(),
-          expandedState: {},
+          expandedState: expandedState,
         ),
         loadingState: state.loadingState.copyWith(isLoading: false),
       );
@@ -121,8 +114,10 @@ class GameViewModel extends StateNotifier<CombinedState> {
       // 상태 업데이트
       state = state.copyWith(
         gameDataState: state.gameDataState.copyWith(
-          schema: schemaResponse.game,
-          achievements: mergedAchievements,
+          achievements: {
+            ...state.gameDataState.achievements,
+            appId: mergedAchievements, // appId 기준으로 저장
+          },
         ),
       );
     } catch (e) {
@@ -134,6 +129,7 @@ class GameViewModel extends StateNotifier<CombinedState> {
     }
   }
 
+
   /// 게임 확장 상태 토글
   void toggleExpandedState(int appId) {
     final currentExpandedState = state.gameDataState.expandedState;
@@ -143,7 +139,7 @@ class GameViewModel extends StateNotifier<CombinedState> {
       gameDataState: state.gameDataState.copyWith(
         expandedState: {
           ...currentExpandedState,
-          appId: !isExpanded, // 토글 상태 업데이트
+          appId: !isExpanded,
         },
       ),
     );
