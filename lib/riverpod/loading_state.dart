@@ -1,9 +1,19 @@
+class LoadingState {
+  final bool isLoading;
+  final String description;
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+  LoadingState({
+    this.isLoading = false,
+    this.description = "",
+  });
 
-class LoadingState extends StateNotifier<bool> {
-  LoadingState() : super(false);
-  
-  void startLoading() => state = true;
-  void stopLoading() => state = false;
+  LoadingState copyWith({
+    bool? isLoading,
+    String? description,
+  }) {
+    return LoadingState(
+      isLoading: isLoading ?? this.isLoading,
+      description: description ?? this.description,
+    );
+  }
 }

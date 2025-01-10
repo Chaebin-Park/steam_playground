@@ -1,3 +1,3 @@
-abstract class UseCase<Output, Input> {
-  Future<Output> execute(Input queryParameters);
+abstract class UseCase<Output, Params> {
+  Future<Output> execute(Params params);
 }

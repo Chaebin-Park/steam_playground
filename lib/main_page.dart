@@ -4,6 +4,11 @@ import 'package:steamplayground/api/api_client.dart';
 import 'package:steamplayground/api/models/owned_games_response.dart';
 import 'package:steamplayground/api/models/player_summaries_response.dart';
 import 'package:steamplayground/api/models/schema_for_game_response.dart';
+import 'package:steamplayground/api/param/owned_games_params.dart';
+import 'package:steamplayground/api/param/player_archievements_params.dart';
+import 'package:steamplayground/api/param/player_summaries_params.dart';
+import 'package:steamplayground/api/param/resolve_vanity_url_params.dart';
+import 'package:steamplayground/api/param/schema_for_game_params.dart';
 import 'package:steamplayground/api/repository/steam_repository_impl.dart';
 import 'package:steamplayground/api/usecase/owned_games_usecase.dart';
 import 'package:steamplayground/api/usecase/player_achievements_usecase.dart';
@@ -105,6 +110,7 @@ class _MainPage extends ConsumerState<MainPage> {
   }
 
   Widget gameList() {
+    /**
     return GameList(
         games: _games.toList(),
         expandedState: _expandedState,
@@ -114,6 +120,8 @@ class _MainPage extends ConsumerState<MainPage> {
             _expandedState[index] = !(_expandedState[index] ?? false);
           });
         });
+        **/
+    return GameList();
   }
 
   Widget playerList() {
@@ -141,7 +149,8 @@ class _MainPage extends ConsumerState<MainPage> {
   Future<void> _fetchGameSchema(int appId) async {
     try {
       final response = await _schemaForGameUseCase
-          .execute({'key': widget.apiKey, 'appid': appId});
+          .execute(SchemaForGameParams(apiKey: widget.apiKey, appId: appId));
+
       final game = response.game;
       setState(() {
         _gameSchema[appId] = game;
@@ -153,8 +162,8 @@ class _MainPage extends ConsumerState<MainPage> {
 
   Future<String?> _fetchSteamIdFromVanityUrl(String vanityUrl) async {
     try {
-      final response = await _resolveVanityURLUseCase
-          .execute({'key': widget.apiKey, 'vanityurl': vanityUrl});
+      final response = await _resolveVanityURLUseCase.execute(
+          ResolveVanityURLParams(apiKey: widget.apiKey, vanityUrl: vanityUrl));
 
       final data = response.response;
       if (data.success == 1) {
@@ -170,8 +179,9 @@ class _MainPage extends ConsumerState<MainPage> {
 
   Future<void> _handleFetchPlayerAchievements(String steamId, int appId) async {
     try {
-      final response = await _playerAchievementsUseCase
-          .execute({'key': widget.apiKey, 'steamid': steamId, 'appid': appId});
+      final response = await _playerAchievementsUseCase.execute(
+          PlayerAchievementsParams(
+              apiKey: widget.apiKey, steamId: steamId, appId: appId));
 
       Map<String, int> achievementMap = {
         for (var achievement in response.playerStats.achievements)
@@ -194,10 +204,8 @@ class _MainPage extends ConsumerState<MainPage> {
     });
 
     try {
-      final response = await _ownedGamesUseCase.execute({
-        'key': widget.apiKey,
-        'steamid': steamId,
-      });
+      final response = await _ownedGamesUseCase
+          .execute(OwnedGamesParams(apiKey: widget.apiKey, steamId: steamId));
 
       final Set<OwnedGame> importantGames = response.response.games
           .where((game) => game.playtimeForever > 600)
@@ -264,10 +272,9 @@ class _MainPage extends ConsumerState<MainPage> {
     }
 
     try {
-      final response = await _getPlayerSummariesUseCase.execute({
-        'key': widget.apiKey,
-        'steamids': steamId,
-      });
+      final response = await _getPlayerSummariesUseCase.execute(
+          PlayerSummariesParams(
+              apiKey: widget.apiKey, steamId: steamId.toString()));
       final player = response.response.players.first;
 
       setState(() {
