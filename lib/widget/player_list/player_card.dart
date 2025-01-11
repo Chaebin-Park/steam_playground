@@ -32,20 +32,23 @@ class PlayerCard extends StatelessWidget {
               const SizedBox(
                 height: 8,
               ),
-              Center(
-                child: Text(
-                  player.personaName,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              )
+              _buildPlayerName(player.personaName),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPlayerName(String name) {
+    return Text(
+      name,
+      style: const TextStyle(
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+      textAlign: TextAlign.center,
     );
   }
 }

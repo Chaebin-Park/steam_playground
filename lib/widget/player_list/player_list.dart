@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/riverpod/provider.dart';
-import 'package:steamplayground/widget/player_card.dart';
+import 'package:steamplayground/viewmodel/game_viewmodel.dart';
+import 'package:steamplayground/viewmodel/player_viewmodel.dart';
+import 'package:steamplayground/widget/player_list/player_card.dart';
 
 class PlayerList extends ConsumerWidget {
   const PlayerList({super.key});
@@ -25,15 +27,24 @@ class PlayerList extends ConsumerWidget {
               key: ValueKey(player.steamId),
               player: player,
               isSelected: player.steamId == playerState.selectedSteamId,
-              onTap: () {
-                playerViewModel.selectPlayer(player.steamId);
-                gameViewModel.fetchOwnedGames(player.steamId);
-              },
+              onTap: () => _onPlayerSelected(
+                playerViewModel,
+                gameViewModel,
+                player.steamId,
+              ),
             );
           },
         ),
       ),
     );
   }
-}
 
+  void _onPlayerSelected(
+    PlayerViewModel playerViewModel,
+    GameViewModel gameViewModel,
+    String steamId,
+  ) {
+    playerViewModel.selectPlayer(steamId);
+    gameViewModel.fetchOwnedGames(steamId);
+  }
+}

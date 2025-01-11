@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/riverpod/provider.dart';
-import 'package:steamplayground/widget/game_item.dart';
+import 'package:steamplayground/widget/game_list/game_item.dart';
 
 class GameList extends ConsumerWidget {
   const GameList({super.key});
