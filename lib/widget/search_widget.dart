@@ -19,6 +19,7 @@ class SearchWidget extends ConsumerWidget {
             onSubmitted: (url) async {
               if (url.isNotEmpty) {
                 await playerViewModel.fetchPlayerSummaries(url);
+                textController.clear();
               }
             },
             decoration: InputDecoration(
@@ -30,6 +31,7 @@ class SearchWidget extends ConsumerWidget {
                   final url = textController.text;
                   if (url.isNotEmpty) {
                     await playerViewModel.fetchPlayerSummaries(url);
+                    textController.clear();
                   }
                 },
               ),
