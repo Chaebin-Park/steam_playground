@@ -39,9 +39,17 @@ class GameRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  game.name,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Row(
+                  children: [
+                    Text(
+                      game.name,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 8,),
+                    Text(
+                      calcPlayTime(game.playtimeForever)
+                    )
+                  ],
                 ),
                 const SizedBox(height: 8),
                 AchievementsRow(achievements: achievements),
@@ -52,5 +60,12 @@ class GameRow extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String calcPlayTime(int playtimeMinutes) {
+    int hours = playtimeMinutes ~/ 60;
+    int minutes = playtimeMinutes % 60;
+
+    return "$hours h $minutes m";
   }
 }
