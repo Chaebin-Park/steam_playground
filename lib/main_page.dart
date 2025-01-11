@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/riverpod/provider.dart';
-import 'package:steamplayground/widget/game_list.dart';
+import 'package:steamplayground/widget/game_list/game_list.dart';
 import 'package:steamplayground/widget/loading_overlay.dart';
 import 'package:steamplayground/widget/player_list.dart';
 import 'package:steamplayground/widget/search_widget.dart';
