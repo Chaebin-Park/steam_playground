@@ -11,6 +11,9 @@ class GameList extends ConsumerWidget {
     final gameState = ref.watch(gameViewModelProvider);
     final gameViewModel = ref.read(gameViewModelProvider.notifier);
 
+    //gameState.gameDataState.games.sort((a, b) => a.playtimeForever.compareTo(b.playtimeForever)); // 오름차순
+    gameState.gameDataState.games.sort((a, b) => b.playtimeForever.compareTo(a.playtimeForever)); // 내림차순
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
             (context, index) {
