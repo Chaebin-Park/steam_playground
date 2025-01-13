@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AchievementProgressBar extends StatelessWidget {
   final double rate;
+  final double circularRadius = 5;
 
   const AchievementProgressBar({super.key, required this.rate});
 
@@ -12,7 +13,7 @@ class AchievementProgressBar extends StatelessWidget {
       height: 20,
       decoration: BoxDecoration(
         color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(circularRadius),
       ),
       child: Stack(
         children: [
@@ -21,7 +22,7 @@ class AchievementProgressBar extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.blue,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(circularRadius),
               ),
             ),
           ),
