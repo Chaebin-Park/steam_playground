@@ -15,11 +15,11 @@ class ExpandedContent extends StatelessWidget {
         children: achievements
             .map(
               (achievement) => ListTile(
-            leading: Image.network(achievement.icon),
-            title: Text(achievement.displayName),
-            subtitle: Text(achievement.description),
-          ),
-        )
+                leading: Image.network(achievement.icon),
+                title: Text(achievement.displayName),
+                subtitle: Text(achievement.description),
+              ),
+            )
             .toList(),
       ),
     );
