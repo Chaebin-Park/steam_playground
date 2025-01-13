@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/riverpod/provider.dart';
+import 'package:steamplayground/widget/bottom_widget.dart';
 import 'package:steamplayground/widget/game_list/game_list.dart';
 import 'package:steamplayground/widget/loading_overlay.dart';
 import 'package:steamplayground/widget/player_list/player_list.dart';
 import 'package:steamplayground/widget/search_widget.dart';
-import 'package:steamplayground/widget/top.dart';
+import 'package:steamplayground/widget/top_widget.dart';
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
@@ -16,6 +17,9 @@ class MainPage extends ConsumerWidget {
     final playerState = ref.watch(playerViewModelProvider);
     final gameState = ref.watch(gameViewModelProvider);
 
+    final bool playerListChecker = playerState.players.isNotEmpty;
+    final bool gameListChecker = gameState.gameDataState.games.isNotEmpty;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -24,8 +28,8 @@ class MainPage extends ConsumerWidget {
             slivers: [
               TopWidget(),
               const SearchWidget(), // 검색 위젯
-              if (playerState.players.isNotEmpty) PlayerList(), // 플레이어 리스트
-              if (gameState.gameDataState.games.isNotEmpty) GameList(), // 게임 리스트
+              if (playerListChecker) PlayerList(), // 플레이어 리스트
+              if (gameListChecker) GameList(), // 게임 리스트
             ],
           ),
           // 로딩 팝업
