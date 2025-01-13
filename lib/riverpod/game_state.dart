@@ -4,13 +4,11 @@ import 'package:steamplayground/api/models/schema_for_game_response.dart';
 
 class GameDataState {
   final List<OwnedGame> games;
-  final Map<int, bool> expandedState;
   final Map<int, List<AchievementWithStatus>> achievements;
   final GameSchema? schema;
 
   const GameDataState({
     this.games = const [],
-    this.expandedState = const {},
     this.achievements = const {},
     this.schema,
   });
@@ -23,7 +21,6 @@ class GameDataState {
   }) {
     return GameDataState(
       games: games ?? this.games,
-      expandedState: expandedState ?? this.expandedState,
       achievements: achievements ?? this.achievements,
       schema: schema ?? this.schema,
     );

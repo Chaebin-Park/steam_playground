@@ -27,11 +27,14 @@ class PlayerList extends ConsumerWidget {
               key: ValueKey(player.steamId),
               player: player,
               isSelected: player.steamId == playerState.selectedSteamId,
-              onTap: () => _onPlayerSelected(
-                playerViewModel,
-                gameViewModel,
-                player.steamId,
-              ),
+              onTap: () {
+                _onPlayerSelected(
+                  playerViewModel,
+                  gameViewModel,
+                  player.steamId,
+                );
+                gameViewModel.closeDrawer();
+              }
             );
           },
         ),

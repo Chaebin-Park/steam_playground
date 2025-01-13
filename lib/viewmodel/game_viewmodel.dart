@@ -8,6 +8,7 @@ import 'package:steamplayground/api/usecase/owned_games_usecase.dart';
 import 'package:steamplayground/api/usecase/player_achievements_usecase.dart';
 import 'package:steamplayground/api/usecase/schema_for_game_usecase.dart';
 import 'package:steamplayground/riverpod/combined_state.dart';
+import 'package:steamplayground/riverpod/drawer_state.dart';
 
 class GameViewModel extends StateNotifier<CombinedState> {
   final OwnedGamesUseCase _ownedGamesUseCase;
@@ -74,6 +75,17 @@ class GameViewModel extends StateNotifier<CombinedState> {
         loadingState: state.loadingState.copyWith(
           isLoading: false,
           description: "Failed to fetch owned games",
+          currentIndex: 0,
+          totalSteps: 0
+        ),
+      );
+    } finally {
+      state = state.copyWith(
+        loadingState: state.loadingState.copyWith(
+            isLoading: false,
+            description: "Fetch owned games",
+            currentIndex: 0,
+            totalSteps: 0
         ),
       );
     }
@@ -129,19 +141,16 @@ class GameViewModel extends StateNotifier<CombinedState> {
     }
   }
 
+  void openDrawer(List<AchievementWithStatus> achievements) {
+    state = state.copyWith(drawerState: DrawerState(
+      isExpanded: true,
+      achievements: achievements
+    ));
+  }
 
-  /// 게임 확장 상태 토글
-  void toggleExpandedState(int appId) {
-    final currentExpandedState = state.gameDataState.expandedState;
-    final isExpanded = currentExpandedState[appId] ?? false;
-
-    state = state.copyWith(
-      gameDataState: state.gameDataState.copyWith(
-        expandedState: {
-          ...currentExpandedState,
-          appId: !isExpanded,
-        },
-      ),
-    );
+  void closeDrawer() {
+    state = state.copyWith(drawerState: DrawerState(
+        isExpanded: false
+    ));
   }
 }

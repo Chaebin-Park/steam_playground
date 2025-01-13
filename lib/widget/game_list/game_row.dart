@@ -7,13 +7,11 @@ import 'dart:math' as math;
 class GameRow extends StatelessWidget {
   final OwnedGame game;
   final List<AchievementWithStatus> achievements;
-  final bool isExpanded;
 
   const GameRow({
     super.key,
     required this.game,
     required this.achievements,
-    required this.isExpanded,
   });
 
   @override
@@ -56,7 +54,6 @@ class GameRow extends StatelessWidget {
               ],
             ),
           ),
-          Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
         ],
       ),
     );

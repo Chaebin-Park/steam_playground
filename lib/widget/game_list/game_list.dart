@@ -18,16 +18,12 @@ class GameList extends ConsumerWidget {
       delegate: SliverChildBuilderDelegate(
             (context, index) {
           final game = gameState.gameDataState.games[index];
-          final isExpanded = gameState.gameDataState.expandedState[game.appId] ?? false;
           final achievements = gameState.gameDataState.achievements[game.appId];
 
           return GameItem(
             game: game,
-            isExpanded: isExpanded,
             achievements: achievements ?? [],
-            onItemClick: () {
-              gameViewModel.toggleExpandedState(game.appId);
-            },
+            onItemClick: (appId) => gameViewModel.openDrawer(achievements??[]),
           );
         },
         childCount: gameState.gameDataState.games.length,

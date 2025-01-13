@@ -8,19 +8,20 @@ class ExpandedContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: achievements
-            .map(
-              (achievement) => ListTile(
-                leading: Image.network(achievement.icon),
-                title: Text(achievement.displayName),
-                subtitle: Text(achievement.description),
-              ),
-            )
-            .toList(),
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+            (context, index) {
+          final achievement = achievements[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: ListTile(
+              leading: Image.network(achievement.icon),
+              title: Text(achievement.displayName),
+              subtitle: Text(achievement.description),
+            ),
+          );
+        },
+        childCount: achievements.length,
       ),
     );
   }

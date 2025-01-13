@@ -38,7 +38,7 @@ class LoadingOverlay extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "$loadingState.description (${loadingState.currentIndex} / ${loadingState.totalSteps})",
+          "${loadingState.description} (${loadingState.currentIndex} / ${loadingState.totalSteps})",
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
