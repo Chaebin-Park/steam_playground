@@ -12,7 +12,7 @@ class SearchWidget extends ConsumerWidget {
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(children: [
           TextField(
             controller: textController,
