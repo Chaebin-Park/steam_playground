@@ -25,40 +25,67 @@ class GameRow extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          SizedBox(
-            width: imageWidth,
-            child: Image.network(
-              'https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appId}/header.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+          _buildGameImage(imageWidth),
           const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      game.name,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 8,),
-                    Text(
-                      calcPlayTime(game.playtimeForever)
-                    )
-                  ],
-                ),
-                const SizedBox(height: 8),
-                AchievementsRow(achievements: achievements),
-              ],
-            ),
-          ),
+          _buildGameInfo(),
         ],
       ),
     );
   }
 
+  /// 게임 이미지 섹션
+  Widget _buildGameImage(double imageWidth) {
+    return Flexible(
+      flex: 1,
+      child: SizedBox(
+        width: imageWidth,
+        child: Image.network(
+          'https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appId}/header.jpg',
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  /// 게임 정보 섹션
+  Widget _buildGameInfo() {
+    return Flexible(
+      flex: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildGameTitle(),
+          const SizedBox(height: 8),
+          AchievementsRow(achievements: achievements),
+        ],
+      ),
+    );
+  }
+
+  /// 게임 제목과 플레이 시간
+  Widget _buildGameTitle() {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            game.name,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          calcPlayTime(game.playtimeForever),
+          style: const TextStyle(fontSize: 14),
+        ),
+      ],
+    );
+  }
+
+  /// 플레이 시간을 계산하는 함수
   String calcPlayTime(int playtimeMinutes) {
     int hours = playtimeMinutes ~/ 60;
     int minutes = playtimeMinutes % 60;
