@@ -18,11 +18,11 @@ class IndexedDBService<T> {
   Future<Database> _initDatabase() async {
     return await idbFactoryBrowser.open(dbName, version: dbVersion,
         onUpgradeNeeded: (VersionChangeEvent e) {
-          final db = e.database;
-          if (!db.objectStoreNames.contains(storeName)) {
-            db.createObjectStore(storeName, autoIncrement: true);
-          }
-        });
+      final db = e.database;
+      if (!db.objectStoreNames.contains(storeName)) {
+        db.createObjectStore(storeName, autoIncrement: true);
+      }
+    });
   }
 
   Future<bool> contains(String key) async {
@@ -58,14 +58,18 @@ class IndexedDBService<T> {
     final transaction = db.transaction(storeName, 'readonly');
     final store = transaction.objectStore(storeName);
     final results = await store.getAll();
-    return results.cast<Map<String, dynamic>>(); // JSON 반환
+    return results.whereType<Map<String, dynamic>>().toList();
   }
 
   Future<Map<String, dynamic>?> get(String key) async {
     final db = await _database;
     final transaction = db.transaction(storeName, 'readonly');
     final store = transaction.objectStore(storeName);
-    return await store.getObject(key) as Map<String, dynamic>?;
+    final result = await store.getObject(key);
+    if (result is Map<String, dynamic>) {
+      return result;
+    }
+    return null;
   }
 
   Future<void> delete(String key) async {

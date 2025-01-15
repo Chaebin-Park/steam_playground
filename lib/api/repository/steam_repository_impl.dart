@@ -22,7 +22,7 @@ class SteamRepositoryImpl implements SteamRepository {
       if (value is List<String>) {
         return MapEntry(key, value.join(','));
       }
-      return MapEntry(key, value);
+      return MapEntry(key, value ?? '');
     });
 
     return await apiClient.get(endpoint: endpoint, queryParameters: serializedQueryParameters);

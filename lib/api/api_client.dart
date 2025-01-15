@@ -8,8 +8,8 @@ class ApiClient {
       : _dio = dio ??
       Dio(BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: Duration(milliseconds: 5000),
-        receiveTimeout: Duration(milliseconds: 5000),
+        connectTimeout: const Duration(milliseconds: 5000),
+        receiveTimeout: const Duration(milliseconds: 5000),
       ));
 
   Future<dynamic> get({

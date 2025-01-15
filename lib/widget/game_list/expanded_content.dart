@@ -10,12 +10,16 @@ class ExpandedContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
+        (context, index) {
           final achievement = achievements[index];
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
             child: ListTile(
-              leading: Image.network(achievement.icon),
+              leading: Image.network(
+                achievement.icon.isNotEmpty
+                    ? achievement.icon
+                    : 'https://picsum.photos/seed/picsum/200',
+              ),
               title: Text(achievement.displayName),
               subtitle: Text(achievement.description),
             ),

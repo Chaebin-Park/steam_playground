@@ -26,7 +26,6 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
     try {
       String? steamId;
 
-      // URL에서 Steam ID 추출
       if (url.contains('/profiles/')) {
         final regex = RegExp(r'profiles/(\d+)/?');
         final match = regex.firstMatch(url);
@@ -44,10 +43,11 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
       }
 
       if (steamId == null) {
-        throw Exception('Invalid URL');
+        state = state.copyWith(
+            isLoading: false, errorMessage: 'Invalid Steam URL.');
+        return;
       }
 
-      // 플레이어 정보 가져오기
       final response = await playerSummariesUseCase.execute(
         PlayerSummariesParams(steamId: steamId),
       );
@@ -57,7 +57,7 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
       await playerDB.save(player.steamId, player.toJson());
 
       state = state.copyWith(
-        players: {...state.players, response.response.players.first},
+        players: {...state.players, player},
         isLoading: false,
       );
     } catch (e) {

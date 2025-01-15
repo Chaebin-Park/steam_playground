@@ -13,12 +13,19 @@ class ResolveVanityURLUseCase
   @override
   Future<ResolveVanityURLResponse> execute(
       ResolveVanityURLParams params) async {
-    final response = await repository
-        .fetchData(endpointKey: 'resolveVanityURL', queryParameters: {
-      ...params.toQueryParameters(),
-      'key': apiKey,
-    });
+    try {
+      final response = await repository.fetchData(
+        endpointKey: 'resolveVanityURL',
+        queryParameters: {
+          ...params.toQueryParameters(),
+          'key': apiKey,
+        },
+      );
 
-    return ResolveVanityURLResponse.fromJson(response);
+      return ResolveVanityURLResponse.fromJson(response);
+    } catch (e) {
+      return ResolveVanityURLResponse(
+          response: ResponseData(success: 0, steamid: ''));
+    }
   }
 }

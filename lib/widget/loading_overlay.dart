@@ -10,7 +10,10 @@ class LoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!loadingState.isLoading) return SizedBox.shrink();
+    if (!loadingState.isLoading) {
+      return
+        const SizedBox.shrink();
+    }
 
     return Stack(
       children: [

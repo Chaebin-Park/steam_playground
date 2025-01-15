@@ -23,7 +23,7 @@ class PlayerAchievementsUseCase
       );
 
       return PlayerAchievementsResponse.fromJson(response);
-    } catch(e) {
+    } catch (e) {
       return PlayerAchievementsResponse.fromJson({});
     }
   }

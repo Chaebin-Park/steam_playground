@@ -25,10 +25,24 @@ class _MainPageState extends ConsumerState<MainPage> {
   }
 
   Future<void> _loadPlayersFromDB() async {
-    final dbData = await playerDB.getAll();
-    final players = dbData.map((json) => Player.fromJson(json)).toSet();
+    try {
+      final dbData = await playerDB.getAll();
+      final players = dbData
+          .map((json) {
+            try {
+              return Player.fromJson(json);
+            } catch (e) {
+              debugPrint("Error parsing player: $e");
+              return null;
+            }
+          })
+          .whereType<Player>()
+          .toSet();
 
-    ref.read(playerViewModelProvider.notifier).updatePlayers(players);
+      ref.read(playerViewModelProvider.notifier).updatePlayers(players);
+    } catch (e) {
+      debugPrint("Error loading players from DB: $e");
+    }
   }
 
   @override
@@ -50,10 +64,10 @@ class _MainPageState extends ConsumerState<MainPage> {
             height: MediaQuery.of(context).size.height,
             child: CustomScrollView(
               slivers: [
-                TopWidget(),
+                const TopWidget(),
                 const SearchWidget(),
-                if (playerListChecker) PlayerList(),
-                if (gameListChecker) GameList(),
+                if (playerListChecker) const PlayerList(),
+                if (gameListChecker) const GameList(),
               ],
             ),
           ),

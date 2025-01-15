@@ -12,14 +12,23 @@ class SchemaForGameUseCase
 
   @override
   Future<SchemaForGameResponse> execute(SchemaForGameParams params) async {
-    final response = await repository.fetchData(
-      endpointKey: 'getSchemaForGame',
-      queryParameters: {
-        ...params.toQueryParameters(),
-        'key': apiKey,
-      },
-    );
+    try {
+      final response = await repository.fetchData(
+        endpointKey: 'getSchemaForGame',
+        queryParameters: {
+          ...params.toQueryParameters(),
+          'key': apiKey,
+        },
+      );
 
-    return SchemaForGameResponse.fromJson(response);
+      return SchemaForGameResponse.fromJson(response);
+    } catch (e) {
+      return SchemaForGameResponse(
+          game: const GameSchema(
+        gameName: '',
+        gameVersion: '',
+        availableGameStats: AvailableGameStats(achievements: []),
+      ));
+    }
   }
 }

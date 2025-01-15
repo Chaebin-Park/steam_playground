@@ -12,7 +12,7 @@ final playerDB = IndexedDBService<Map<String, dynamic>>(
 
 void main() async {
   await dotenv.load(fileName: "assets/.env");
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         useMaterial3: true,
       ),
-      home: MainPage(),
+      home: const MainPage(),
       scrollBehavior: MyCustomScrollBehavior(),
     );
   }

@@ -119,12 +119,12 @@ class _DrawerWidgetState extends ConsumerState<DrawerWidget> {
     return CustomScrollView(
       controller: _scrollController, // ScrollController 추가
       slivers: [
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8.0),
             child: Text(
               'Achievements',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),

@@ -11,9 +11,9 @@ class CombinedState {
       {LoadingState? loadingState,
       GameDataState? gameDataState,
       DrawerState? drawerState})
-      : loadingState = loadingState ?? LoadingState(),
-        gameDataState = gameDataState ?? GameDataState(),
-        drawerState = drawerState ?? DrawerState();
+      : loadingState = loadingState ?? const LoadingState(),
+        gameDataState = gameDataState ?? const GameDataState(),
+        drawerState = drawerState ?? const DrawerState();
 
   CombinedState copyWith(
       {LoadingState? loadingState,

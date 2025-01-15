@@ -12,14 +12,19 @@ class OwnedGamesUseCase
 
   @override
   Future<OwnedGamesResponse> execute(OwnedGamesParams params) async {
-    final response = await repository.fetchData(
-      endpointKey: 'getOwnedGames',
-      queryParameters: {
-        ...params.toQueryParameters(),
-        'key': apiKey,
-      },
-    );
+    try {
+      final response = await repository.fetchData(
+        endpointKey: 'getOwnedGames',
+        queryParameters: {
+          ...params.toQueryParameters(),
+          'key': apiKey,
+        },
+      );
 
-    return OwnedGamesResponse.fromJson(response);
+      return OwnedGamesResponse.fromJson(response);
+    } catch (e) {
+      return OwnedGamesResponse(
+          response: ResponseData(gameCount: 0, games: []));
+    }
   }
 }

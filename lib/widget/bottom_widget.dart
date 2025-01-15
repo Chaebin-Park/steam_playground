@@ -6,7 +6,7 @@ class BottomWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SliverToBoxAdapter(
+    return const SliverToBoxAdapter(
       child: Text("copyright")
     );
   }

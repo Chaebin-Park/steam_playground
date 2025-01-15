@@ -28,7 +28,12 @@ class PlayerCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.network(player.avatarFull),
+              Image.network(
+                player.avatarFull,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset('assets/images/img_steam_logo_black.png'); // 기본 아바타 이미지
+                },
+              ),
               const SizedBox(
                 height: 8,
               ),

@@ -5,12 +5,16 @@ import 'package:steamplayground/api/models/schema_for_game_response.dart';
 class GameDataState {
   final List<OwnedGame> games;
   final Map<int, List<AchievementWithStatus>> achievements;
-  final GameSchema? schema;
+  final GameSchema schema;
 
   const GameDataState({
     this.games = const [],
     this.achievements = const {},
-    this.schema,
+    this.schema = const GameSchema(
+      gameName: '',
+      gameVersion: '',
+      availableGameStats: AvailableGameStats(achievements: []),
+    ),
   });
 
   GameDataState copyWith({

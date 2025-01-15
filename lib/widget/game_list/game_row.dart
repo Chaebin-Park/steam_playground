@@ -42,6 +42,12 @@ class GameRow extends StatelessWidget {
         child: Image.network(
           'https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appId}/header.jpg',
           fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Image.asset(
+              'assets/images/img_steam_logo_black.png', // 기본 이미지
+              fit: BoxFit.cover,
+            );
+          },
         ),
       ),
     );

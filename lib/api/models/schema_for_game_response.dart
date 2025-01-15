@@ -9,13 +9,12 @@ class SchemaForGameResponse {
     );
   }
 }
-
 class GameSchema {
   final String gameName;
   final String gameVersion;
   final AvailableGameStats availableGameStats;
 
-  GameSchema({
+  const GameSchema({
     required this.gameName,
     required this.gameVersion,
     required this.availableGameStats,
@@ -31,7 +30,9 @@ class GameSchema {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
     return other is GameSchema && other.gameName == gameName;
   }
 
@@ -39,10 +40,11 @@ class GameSchema {
   int get hashCode => gameName.hashCode;
 }
 
+
 class AvailableGameStats {
   final List<SchemaAchievement> achievements;
 
-  AvailableGameStats({required this.achievements});
+  const AvailableGameStats({required this.achievements});
 
   factory AvailableGameStats.fromJson(Map<String, dynamic> json) {
     return AvailableGameStats(

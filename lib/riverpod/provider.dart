@@ -13,11 +13,14 @@ import 'package:steamplayground/riverpod/player_state.dart';
 import 'package:steamplayground/viewmodel/game_viewmodel.dart';
 import 'package:steamplayground/viewmodel/player_viewmodel.dart';
 
-
 /// API
 
 final apiKeyProvider = Provider<String>((ref) {
-  return dotenv.env['API_KEY']!;
+  final apiKey = dotenv.env['API_KEY'];
+  if (apiKey == null || apiKey.isEmpty) {
+    throw Exception("API_KEY is not defined in .env file.");
+  }
+  return apiKey;
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {
@@ -37,7 +40,8 @@ final ownedGamesUseCaseProvider = Provider<OwnedGamesUseCase>((ref) {
   return OwnedGamesUseCase(repository: repository, apiKey: apiKey);
 });
 
-final playerAchievementsUseCaseProvider = Provider<PlayerAchievementsUseCase>((ref) {
+final playerAchievementsUseCaseProvider =
+    Provider<PlayerAchievementsUseCase>((ref) {
   final repository = ref.read(steamRepositoryProvider);
   final apiKey = ref.read(apiKeyProvider);
   return PlayerAchievementsUseCase(repository: repository, apiKey: apiKey);
@@ -50,7 +54,7 @@ final schemaForGameUseCaseProvider = Provider<SchemaForGameUseCase>((ref) {
 });
 
 final gameViewModelProvider =
-StateNotifierProvider<GameViewModel, CombinedState>((ref) {
+    StateNotifierProvider<GameViewModel, CombinedState>((ref) {
   final ownedGamesUseCase = ref.read(ownedGamesUseCaseProvider);
   final playerAchievementsUseCase = ref.read(playerAchievementsUseCaseProvider);
   final schemaForGameUseCase = ref.read(schemaForGameUseCaseProvider);
@@ -62,7 +66,6 @@ StateNotifierProvider<GameViewModel, CombinedState>((ref) {
   );
 });
 
-
 /// Player
 final playerSummariesUseCaseProvider = Provider<PlayerSummariesUseCase>((ref) {
   final repository = ref.read(steamRepositoryProvider);
@@ -70,14 +73,15 @@ final playerSummariesUseCaseProvider = Provider<PlayerSummariesUseCase>((ref) {
   return PlayerSummariesUseCase(repository: repository, apiKey: apiKey);
 });
 
-final resolveVanityURLUseCaseProvider = Provider<ResolveVanityURLUseCase>((ref) {
+final resolveVanityURLUseCaseProvider =
+    Provider<ResolveVanityURLUseCase>((ref) {
   final repository = ref.read(steamRepositoryProvider);
   final apiKey = ref.read(apiKeyProvider);
   return ResolveVanityURLUseCase(repository: repository, apiKey: apiKey);
 });
 
 final playerViewModelProvider =
-StateNotifierProvider<PlayerViewModel, PlayerState>((ref) {
+    StateNotifierProvider<PlayerViewModel, PlayerState>((ref) {
   final playerSummariesUseCase = ref.read(playerSummariesUseCaseProvider);
   final resolveVanityURLUseCase = ref.read(resolveVanityURLUseCaseProvider);
   return PlayerViewModel(
@@ -85,5 +89,3 @@ StateNotifierProvider<PlayerViewModel, PlayerState>((ref) {
     resolveVanityURLUseCase: resolveVanityURLUseCase,
   );
 });
-
-

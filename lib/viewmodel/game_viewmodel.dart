@@ -73,11 +73,10 @@ class GameViewModel extends StateNotifier<CombinedState> {
     } catch (e) {
       state = state.copyWith(
         loadingState: state.loadingState.copyWith(
-          isLoading: false,
-          description: "Failed to fetch owned games",
-          currentIndex: 0,
-          totalSteps: 0
-        ),
+            isLoading: false,
+            description: "Failed to fetch owned games",
+            currentIndex: 0,
+            totalSteps: 0),
       );
     } finally {
       state = state.copyWith(
@@ -85,8 +84,7 @@ class GameViewModel extends StateNotifier<CombinedState> {
             isLoading: false,
             description: "Fetch owned games",
             currentIndex: 0,
-            totalSteps: 0
-        ),
+            totalSteps: 0),
       );
     }
   }
@@ -94,24 +92,24 @@ class GameViewModel extends StateNotifier<CombinedState> {
   /// 게임 세부 정보 가져오기
   Future<void> _fetchGameDetails(String steamId, int appId) async {
     try {
-      // 스키마 업적 데이터 가져오기
       final schemaResponse = await _schemaForGameUseCase.execute(
         SchemaForGameParams(appId: appId),
       );
 
-      // 플레이어 업적 데이터 가져오기
-      final playerAchievementsResponse = await _playerAchievementsUseCase.execute(
+      final playerAchievementsResponse =
+          await _playerAchievementsUseCase.execute(
         PlayerAchievementsParams(steamId: steamId, appId: appId),
       );
 
-      // 플레이어 업적을 맵으로 변환
       final playerAchievementMap = {
-        for (var achievement in playerAchievementsResponse.playerStats.achievements)
+        for (var achievement
+            in playerAchievementsResponse.playerStats.achievements)
           achievement.apiName: achievement.achieved > 0,
       };
 
-      // 병합된 업적 리스트 생성
-      final mergedAchievements = schemaResponse.game.availableGameStats.achievements.map((achievement) {
+      final mergedAchievements = schemaResponse
+          .game.availableGameStats.achievements
+          .map((achievement) {
         final isAchieved = playerAchievementMap[achievement.name] ?? false;
 
         return AchievementWithStatus(
@@ -123,12 +121,11 @@ class GameViewModel extends StateNotifier<CombinedState> {
         );
       }).toList();
 
-      // 상태 업데이트
       state = state.copyWith(
         gameDataState: state.gameDataState.copyWith(
           achievements: {
             ...state.gameDataState.achievements,
-            appId: mergedAchievements, // appId 기준으로 저장
+            appId: mergedAchievements,
           },
         ),
       );
@@ -142,15 +139,11 @@ class GameViewModel extends StateNotifier<CombinedState> {
   }
 
   void openDrawer(List<AchievementWithStatus> achievements) {
-    state = state.copyWith(drawerState: DrawerState(
-      isExpanded: true,
-      achievements: achievements
-    ));
+    state = state.copyWith(
+        drawerState: DrawerState(isExpanded: true, achievements: achievements));
   }
 
   void closeDrawer() {
-    state = state.copyWith(drawerState: DrawerState(
-        isExpanded: false
-    ));
+    state = state.copyWith(drawerState: const DrawerState(isExpanded: false));
   }
 }

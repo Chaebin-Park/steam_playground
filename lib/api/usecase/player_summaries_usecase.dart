@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:steamplayground/api/models/player_summaries_response.dart';
 import 'package:steamplayground/api/param/player_summaries_params.dart';
 import 'package:steamplayground/api/repository/steam_repository.dart';
@@ -23,8 +22,7 @@ class PlayerSummariesUseCase
       );
 
       return PlayerSummariesResponse.fromJson(response);
-    } catch(e) {
-      debugPrint("Error: $e");
+    } catch (e) {
       return PlayerSummariesResponse.fromJson({});
     }
   }
