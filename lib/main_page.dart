@@ -28,10 +28,6 @@ class _MainPageState extends ConsumerState<MainPage> {
     final dbData = await playerDB.getAll();
     final players = dbData.map((json) => Player.fromJson(json)).toSet();
 
-    for (var player in players) {
-      print("player: $player");
-    }
-
     ref.read(playerViewModelProvider.notifier).updatePlayers(players);
   }
 
