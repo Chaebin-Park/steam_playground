@@ -36,7 +36,7 @@ jobs:
       - name: Copy .env file to build directory
         run: |
           mkdir -p build/web/assets
-          cp assets/.env build/web/assets/.env
+          cp assets/.env build/web/assets/assets/.env
 
       - name: Import Flutter package
         run: flutter pub get
