@@ -17,7 +17,6 @@ class MainPage extends ConsumerStatefulWidget {
   ConsumerState<MainPage> createState() => _MainPageState();
 }
 
-
 class _MainPageState extends ConsumerState<MainPage> {
   @override
   void initState() {

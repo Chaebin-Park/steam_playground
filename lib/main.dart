@@ -12,6 +12,7 @@ final playerDB = IndexedDBService<Map<String, dynamic>>(
 
 void main() async {
   await dotenv.load(fileName: "assets/.env");
+  await dotenv.load(fileName: "assets/assets/.env");
   runApp(ProviderScope(child: const MyApp()));
 }
 
