@@ -16,9 +16,9 @@ import 'package:steamplayground/viewmodel/player_viewmodel.dart';
 /// API
 
 final apiKeyProvider = Provider<String>((ref) {
-  final apiKey = dotenv.env['API_KEY'];
+  final apiKey = dotenv.env['FLUTTER_APP_API_KEY'];
   if (apiKey == null || apiKey.isEmpty) {
-    throw Exception("API_KEY is not defined in .env file.");
+    throw Exception("FLUTTER_APP_API_KEY is not defined in .env file.");
   }
   return apiKey;
 });
