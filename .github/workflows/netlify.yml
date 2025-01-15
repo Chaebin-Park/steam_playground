@@ -24,7 +24,7 @@ jobs:
         run: |
           if [ -f assets/.env ]; then
             echo ".env file created successfully."
-            # Mask the API key in the logs
+            # Mask the API key in the logs for security
             echo "::add-mask::$(cat assets/.env)"
             # Output the content of the .env file
             cat assets/.env
@@ -36,7 +36,20 @@ jobs:
       - name: Copy .env file to build directory
         run: |
           mkdir -p build/web/assets
-          cp assets/.env build/web/assets/assets/.env
+          cp assets/.env build/web/assets/.env
+
+      - name: Verify .env file in build directory
+        run: |
+          if [ -f build/web/assets/.env ]; then
+            echo ".env file successfully copied to build directory."
+            # Mask the API key in the logs for security
+            echo "::add-mask::$(cat build/web/assets/.env)"
+            # Output the content of the .env file
+            cat build/web/assets/.env
+          else
+            echo ".env file not found in build directory."
+            exit 1
+          fi
 
       - name: Import Flutter package
         run: flutter pub get
