@@ -57,8 +57,8 @@ jobs:
       - name: Build Flutter web
         run: flutter build web --release
 
-      - name: Copy _redirects file to build directory
-        run: cp _redirects build/web/
+#      - name: Copy _redirects file to build directory
+#        run: cp _redirects build/web/
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
