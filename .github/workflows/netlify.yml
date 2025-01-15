@@ -17,13 +17,13 @@ jobs:
         with:
           channel: 'stable'
         
-      # - name: Create .env file
-        # run: echo "API_KEY=${{ secrets.API_KEY }}" > assets/.env
+      - name: Create .env file
+        run: echo "API_KEY=${{ secrets.STEAM_API_KEY }}" > assets/.env
 
       - name: Copy .env file
         run: |
           mkdir -p build/web/assets
-          echo "API_KEY=${{ secrets.API_KEY }}" > build/web/assets/.env
+          echo "API_KEY=${{ secrets.STEAM_API_KEY }}" > build/web/assets/.env
 
       - name: Import Flutter package
         run: flutter pub get
