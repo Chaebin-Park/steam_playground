@@ -16,9 +16,22 @@ jobs:
         uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable'
-        
+
       - name: Create .env file
         run: echo "API_KEY=${{ secrets.STEAM_API_KEY }}" > assets/.env
+
+      - name: Verify .env file creation
+        run: |
+          if [ -f assets/.env ]; then
+            echo ".env file created successfully."
+            # Mask the API key in the logs
+            echo "::add-mask::$(cat assets/.env)"
+            # Output the content of the .env file
+            cat assets/.env
+          else
+            echo ".env file not found."
+            exit 1
+          fi
 
       - name: Copy .env file to build directory
         run: |
@@ -31,17 +44,17 @@ jobs:
       - name: Build Flutter web
         run: flutter build web --release
 
-      - name : Deploy to Netlify
-        uses : nwtgck/actions-netlify@v2.0
-        with : 
-          publish-dir : './build/web'
-          production-branch : develop
-          github-token: ${{secrets.GH_TOKEN}}
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: './build/web'
+          production-branch: develop
+          github-token: ${{ secrets.GH_TOKEN }}
           deploy-message: "Deploy from GitHub Actions"
           enable-pull-request-comment: false
           enable-commit-comment: true
           overwrites-pull-request-comment: true
         env:
-          NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
-          NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 1
