@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/riverpod/provider.dart';
 import 'package:steamplayground/widget/drawer_widget.dart';
-import 'package:steamplayground/widget/game_list/expanded_content.dart';
 import 'package:steamplayground/widget/game_list/game_list.dart';
 import 'package:steamplayground/widget/loading_overlay.dart';
 import 'package:steamplayground/widget/player_list/player_list.dart';
@@ -14,10 +13,8 @@ class MainPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ViewModel 상태 구독
     final playerState = ref.watch(playerViewModelProvider);
     final gameState = ref.watch(gameViewModelProvider);
-    final gameViewModel = ref.read(gameViewModelProvider.notifier);
 
     final bool playerListChecker = playerState.players.isNotEmpty;
     final bool gameListChecker = gameState.gameDataState.games.isNotEmpty;

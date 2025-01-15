@@ -50,7 +50,7 @@ class GameRow extends StatelessWidget {
   /// 게임 정보 섹션
   Widget _buildGameInfo() {
     return Flexible(
-      flex: 2,
+      flex: 10,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -66,14 +66,11 @@ class GameRow extends StatelessWidget {
   Widget _buildGameTitle() {
     return Row(
       children: [
-        Expanded(
-          child: Text(
-            game.name,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-            overflow: TextOverflow.ellipsis,
+        Text(
+          game.name,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(width: 8),
