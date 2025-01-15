@@ -18,7 +18,7 @@ jobs:
           channel: 'stable'
         
       - name: Create .env file
-        run: echo "API_KEY=${{ secrets.STEAM_API_KEY }}" > assets/.env
+        run: echo "API_KEY=${{ secrets.STEAM_API_KEY }}" > ./build/assets/.env
 
       - name: Copy .env file to build directory
         run: |
