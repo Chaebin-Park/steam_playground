@@ -2,13 +2,12 @@ name: Deploy to Netlify
 
 on:
   push:
-    branches:
-      - main  # main 브랜치에 푸시될 때만 실행
+  pull_request:
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
+  build:
+    name: Build-action
+    runs-on: ubuntu-22.04
     steps:
     # 1. 리포지토리 클론
     - name: Checkout repository
