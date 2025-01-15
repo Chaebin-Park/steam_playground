@@ -5,7 +5,7 @@ class ResolveVanityURLResponse {
 
   factory ResolveVanityURLResponse.fromJson(Map<String, dynamic> json) {
     return ResolveVanityURLResponse(
-      response: ResponseData.fromJson(json['response']),
+      response: ResponseData.fromJson(json['response'] ?? {}),
     );
   }
 
@@ -18,14 +18,17 @@ class ResolveVanityURLResponse {
 
 class ResponseData {
   final int success;
-  final String? steamid;
+  final String steamid;
 
-  ResponseData({required this.success, this.steamid});
+  ResponseData({
+    required this.success,
+    required this.steamid,
+  });
 
   factory ResponseData.fromJson(Map<String, dynamic> json) {
     return ResponseData(
-      success: json['success'],
-      steamid: json['steamid'],
+      success: json['success'] ?? 0,
+      steamid: json['steamid'] ?? '',
     );
   }
 

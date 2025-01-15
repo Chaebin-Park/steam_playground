@@ -5,8 +5,14 @@ class PlayerSummariesResponse {
 
   factory PlayerSummariesResponse.fromJson(Map<String, dynamic> json) {
     return PlayerSummariesResponse(
-      response: ResponseData.fromJson(json['response']),
+      response: ResponseData.fromJson(json['response'] ?? {}),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'response': response.toJson(),
+    };
   }
 }
 
@@ -17,8 +23,17 @@ class ResponseData {
 
   factory ResponseData.fromJson(Map<String, dynamic> json) {
     return ResponseData(
-      players: (json['players'] as List).map((player) => Player.fromJson(player)).toList(),
+      players: (json['players'] as List?)
+          ?.map((player) => Player.fromJson(player))
+          .toList() ??
+          [],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'players': players.map((player) => player.toJson()).toList(),
+    };
   }
 }
 
@@ -29,7 +44,7 @@ class Player {
   final String avatar;
   final String avatarFull;
   final int lastLogoff;
-  final String? realName;
+  final String realName;
 
   Player({
     required this.steamId,
@@ -38,18 +53,18 @@ class Player {
     required this.avatar,
     required this.avatarFull,
     required this.lastLogoff,
-    this.realName,
+    required this.realName,
   });
 
   factory Player.fromJson(Map<String, dynamic> json) {
     return Player(
-      steamId: json['steamid'],
-      personaName: json['personaname'],
-      profileUrl: json['profileurl'],
-      avatar: json['avatar'],
-      avatarFull: json['avatarfull'],
-      lastLogoff: json['lastlogoff'],
-      realName: json['realname'],
+      steamId: json['steamid'] ?? '',
+      personaName: json['personaname'] ?? '',
+      profileUrl: json['profileurl'] ?? '',
+      avatar: json['avatar'] ?? '',
+      avatarFull: json['avatarfull'] ?? '',
+      lastLogoff: json['lastlogoff'] ?? 0,
+      realName: json['realname'] ?? '',
     );
   }
 
@@ -64,13 +79,4 @@ class Player {
       'realname': realName,
     };
   }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is Player && other.steamId == steamId;
-  }
-
-  @override
-  int get hashCode => steamId.hashCode;
 }

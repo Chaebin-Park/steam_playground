@@ -5,7 +5,7 @@ class PlayerAchievementsResponse {
 
   factory PlayerAchievementsResponse.fromJson(Map<String, dynamic> json) {
     return PlayerAchievementsResponse(
-      playerStats: PlayerStats.fromJson(json['playerstats']),
+      playerStats: PlayerStats.fromJson(json['playerstats'] ?? {}),
     );
   }
 }
@@ -23,9 +23,9 @@ class PlayerStats {
 
   factory PlayerStats.fromJson(Map<String, dynamic> json) {
     return PlayerStats(
-      steamID: json['steamID'],
-      gameName: json['gameName'],
-      achievements: (json['achievements'] as List)
+      steamID: json['steamID'] ?? '',
+      gameName: json['gameName'] ?? '',
+      achievements: (json['achievements'] as List<dynamic>? ?? [])
           .map((achievement) => PlayerAchievement.fromJson(achievement))
           .toList(),
     );
@@ -45,9 +45,9 @@ class PlayerAchievement {
 
   factory PlayerAchievement.fromJson(Map<String, dynamic> json) {
     return PlayerAchievement(
-      apiName: json['apiname'],
-      achieved: json['achieved'],
-      unLockTime: json['unlocktime'],
+      apiName: json['apiname'] ?? '',
+      achieved: json['achieved'] ?? 0,
+      unLockTime: json['unlocktime'] ?? 0,
     );
   }
 }

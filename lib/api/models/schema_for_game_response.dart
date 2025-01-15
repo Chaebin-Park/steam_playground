@@ -5,13 +5,13 @@ class SchemaForGameResponse {
 
   factory SchemaForGameResponse.fromJson(Map<String, dynamic> json) {
     return SchemaForGameResponse(
-      game: GameSchema.fromJson(json['game']),
+      game: GameSchema.fromJson(json['game'] ?? {}),
     );
   }
 }
 
 class GameSchema {
-  final String? gameName;
+  final String gameName;
   final String gameVersion;
   final AvailableGameStats availableGameStats;
 
@@ -23,9 +23,9 @@ class GameSchema {
 
   factory GameSchema.fromJson(Map<String, dynamic> json) {
     return GameSchema(
-      gameName: json['gameName'],
-      gameVersion: json['gameVersion'],
-      availableGameStats: AvailableGameStats.fromJson(json['availableGameStats']),
+      gameName: json['gameName'] ?? '',
+      gameVersion: json['gameVersion'] ?? '',
+      availableGameStats: AvailableGameStats.fromJson(json['availableGameStats'] ?? {}),
     );
   }
 
@@ -46,7 +46,7 @@ class AvailableGameStats {
 
   factory AvailableGameStats.fromJson(Map<String, dynamic> json) {
     return AvailableGameStats(
-      achievements: (json['achievements'] as List)
+      achievements: (json['achievements'] as List<dynamic>? ?? [])
           .map((achievement) => SchemaAchievement.fromJson(achievement))
           .toList(),
     );
@@ -70,11 +70,11 @@ class SchemaAchievement {
 
   factory SchemaAchievement.fromJson(Map<String, dynamic> json) {
     return SchemaAchievement(
-      name: json['name'],
-      displayName: json['displayName'],
+      name: json['name'] ?? '',
+      displayName: json['displayName'] ?? '',
       description: json['description'] ?? '',
-      icon: json['icon'],
-      iconGray: json['icongray'],
+      icon: json['icon'] ?? '',
+      iconGray: json['icongray'] ?? '',
     );
   }
 

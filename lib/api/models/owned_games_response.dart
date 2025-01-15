@@ -5,7 +5,7 @@ class OwnedGamesResponse {
 
   factory OwnedGamesResponse.fromJson(Map<String, dynamic> json) {
     return OwnedGamesResponse(
-      response: ResponseData.fromJson(json['response']),
+      response: ResponseData.fromJson(json['response'] ?? {}),
     );
   }
 
@@ -20,12 +20,18 @@ class ResponseData {
   final int gameCount;
   final List<OwnedGame> games;
 
-  ResponseData({required this.gameCount, required this.games});
+  ResponseData({
+    required this.gameCount,
+    required this.games,
+  });
 
   factory ResponseData.fromJson(Map<String, dynamic> json) {
     return ResponseData(
-      gameCount: json['game_count'],
-      games: (json['games'] as List).map((game) => OwnedGame.fromJson(game)).toList(),
+      gameCount: json['game_count'] ?? 0,
+      games: (json['games'] as List?)
+          ?.map((game) => OwnedGame.fromJson(game))
+          .toList() ??
+          [],
     );
   }
 
@@ -42,29 +48,32 @@ class OwnedGame {
   final String name;
   final String imgIconUrl;
   final int playtimeForever;
-  final bool? hasCommunityVisibleStats;
-  final List<int>? contentDescriptorIds;
-  final bool? hasLeaderboards;
+  final bool hasCommunityVisibleStats;
+  final List<int> contentDescriptorIds;
+  final bool hasLeaderboards;
 
   OwnedGame({
     required this.appId,
     required this.name,
     required this.imgIconUrl,
     required this.playtimeForever,
-    this.hasCommunityVisibleStats,
-    this.contentDescriptorIds,
-    this.hasLeaderboards,
+    required this.hasCommunityVisibleStats,
+    required this.contentDescriptorIds,
+    required this.hasLeaderboards,
   });
 
   factory OwnedGame.fromJson(Map<String, dynamic> json) {
     return OwnedGame(
-      appId: json['appid'],
-      name: json['name'],
-      imgIconUrl: json['img_icon_url'],
-      playtimeForever: json['playtime_forever'],
-      hasCommunityVisibleStats: json['has_community_visible_stats'],
-      contentDescriptorIds: (json['content_descriptorids'] as List?)?.map((id) => id as int).toList(),
-      hasLeaderboards: json['has_leaderboards'],
+      appId: json['appid'] ?? 0,
+      name: json['name'] ?? '',
+      imgIconUrl: json['img_icon_url'] ?? '',
+      playtimeForever: json['playtime_forever'] ?? 0,
+      hasCommunityVisibleStats: json['has_community_visible_stats'] ?? false,
+      contentDescriptorIds: (json['content_descriptorids'] as List?)
+          ?.map((id) => id as int)
+          .toList() ??
+          [],
+      hasLeaderboards: json['has_leaderboards'] ?? false,
     );
   }
 
@@ -79,13 +88,4 @@ class OwnedGame {
       'has_leaderboards': hasLeaderboards,
     };
   }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is OwnedGame && other.appId == appId;
-  }
-
-  @override
-  int get hashCode => appId.hashCode;
 }

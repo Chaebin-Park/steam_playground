@@ -12,4 +12,24 @@ class AchievementWithStatus {
     required this.icon,
     required this.isAchieved,
   });
+
+  factory AchievementWithStatus.fromJson(Map<String, dynamic> json) {
+    return AchievementWithStatus(
+      name: json['name'] ?? '',
+      displayName: json['displayName'] ?? '',
+      description: json['description'] ?? '',
+      icon: json['icon'] ?? '',
+      isAchieved: json['isAchieved'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'displayName': displayName,
+      'description': description,
+      'icon': icon,
+      'isAchieved': isAchieved,
+    };
+  }
 }
