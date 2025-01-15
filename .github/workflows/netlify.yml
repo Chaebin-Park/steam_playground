@@ -1,4 +1,4 @@
-name: Deploy to Netlify
+name: Build and Deploy to Netlify
 
 on:
   push:
@@ -9,33 +9,32 @@ jobs:
     name: Build-action
     runs-on: ubuntu-22.04
     steps:
-    # 1. 리포지토리 클론
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v4.1.1
 
-    # 2. Flutter 설치
-    - name: Install Flutter SDK
-      uses: subosito/flutter-action@v2.12.0
-      with:
-        channel: 'stable'
-        flutter-version: '3.6.0'
+      - name: Install Flutter SDK
+        uses: subosito/flutter-action@v2.12.0
+        with:
+          channel: 'stable'
+          flutter-version: '3.6.0'
 
-    # 3. Flutter 웹 빌드
-    - name: Build Flutter Web
-      run: flutter build web --release
+      - name: Import Flutter package
+        run: flutter pub get
 
-    # 4. Netlify에 배포
-    - name : Deploy to Netlify
-      uses : nwtgck/actions-netlify@v2.0
-      with : 
-        publish-dirt : './build/web'
-        production-branch : develop
-        github-token: ${{secrets.GH_TOKEN}}
-        deploy-message: "Deploy from GitHub Actions"
-        enable-pull-request-comment: false
-        enable-commit-comment: true
-        overwrites-pull-request-comment: true
-      env:
-        NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
-        NETLIFY_SITE_ID: ${{screts.NETLIFY_SITE_ID}}
-      timeout-minutes: 1
+      - name: Build Flutter web
+        run: flutter build web --release
+
+      - name : Deploy to Netlify
+        uses : nwtgck/actions-netlify@v2.0
+        with : 
+          publish-dirt : './build/web'
+          production-branch : develop
+          github-token: ${{secrets.GH_TOKEN}}
+          deploy-message: "Deploy from GitHub Actions"
+          enable-pull-request-comment: false
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
+          NETLIFY_SITE_ID: ${{screts.NETLIFY_SITE_ID}}
+        timeout-minutes: 1
