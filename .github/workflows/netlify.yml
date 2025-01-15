@@ -1,40 +1,35 @@
-name: Build and Deploy to Netlify
+name: Deploy to Netlify
 
 on:
   push:
-  pull_request:
+    branches:
+      - main  # main 브랜치에 푸시될 때만 실행
 
 jobs:
-  build:
-    name: Build-action
-    runs-on: ubuntu-22.04
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4.1.1
+    # 1. 리포지토리 클론
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Install Flutter SDK
-        uses: subosito/flutter-action@v2.12.0
-        with:
-          channel: 'stable'
-          flutter-version: '3.16.9'
+    # 2. Flutter 설치
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: 'stable'
 
-      - name: Import Flutter package
-        run: flutter pub get
+    # 3. Flutter 웹 빌드
+    - name: Build Flutter Web
+      run: flutter build web --release
 
-      - name: Build Flutter web
-        run: flutter build web --release
-
-      - name : Deploy to Netlify
-        uses : nwtgck/actions-netlify@v2.0
-        with : 
-          publish-dirt : './build/web'
-          production-branch : develop
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          deploy-message: "Deploy from GitHub Actions"
-          enable-pull-request-comment: false
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
-          NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
-        timeout-minutes: 1
+    # 4. Netlify에 배포
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v1.2.0
+      with:
+        publish-dir: build/web
+        production: true
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
