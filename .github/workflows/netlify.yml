@@ -18,7 +18,7 @@ jobs:
           channel: 'stable'
         
       - name: Create .env file
-        run: echo "API_KEY=${{ secrets.API_KEY }}" > /.env
+        run: echo "API_KEY=${{ secrets.API_KEY }}" > assets/.env
 
       - name: Import Flutter package
         run: flutter pub get
