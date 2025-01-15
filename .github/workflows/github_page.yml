@@ -19,8 +19,11 @@ jobs:
 
       - name: Install Dependencies
         run: flutter pub get
+        
+      - name: Import Flutter package
+        run: flutter pub get
 
-      - name: Build Web
+      - name: Build Flutter web
         run: flutter build web --release
 
       - name: Add .nojekyll
