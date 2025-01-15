@@ -26,7 +26,6 @@ jobs:
             echo ".env file created successfully."
             # Mask the API key in the logs for security
 #            echo "::add-mask::$(cat assets/.env)"
-            echo "$(cat assets/.env)"
             # Output the content of the .env file
             cat assets/.env
           else
@@ -45,7 +44,6 @@ jobs:
             echo ".env file successfully copied to build directory."
             # Mask the API key in the logs for security
 #            echo "::add-mask::$(cat build/web/assets/.env)"
-            echo "$(cat build/web/assets/.env)"
             # Output the content of the .env file
             cat build/web/assets/.env
           else
