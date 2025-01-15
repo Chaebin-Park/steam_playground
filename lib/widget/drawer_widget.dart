@@ -3,19 +3,47 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/widget/game_list/expanded_content.dart';
 import 'package:steamplayground/riverpod/provider.dart';
 
-class DrawerWidget extends ConsumerWidget {
+class DrawerWidget extends ConsumerStatefulWidget {
   final double width;
 
   const DrawerWidget({super.key, required this.width});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DrawerWidget> createState() => _DrawerWidgetState();
+}
+
+class _DrawerWidgetState extends ConsumerState<DrawerWidget> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void didUpdateWidget(covariant DrawerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 스크롤을 최상단으로 이동
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final gameState = ref.watch(gameViewModelProvider);
     final gameViewModel = ref.read(gameViewModelProvider.notifier);
 
     return AnimatedPositioned(
-      right: gameState.drawerState.isExpanded ? 0 : -width,
-      width: width,
+      right: gameState.drawerState.isExpanded ? 0 : -widget.width,
+      width: widget.width,
       height: MediaQuery.of(context).size.height,
       duration: const Duration(milliseconds: 300),
       child: Material(
@@ -89,6 +117,7 @@ class DrawerWidget extends ConsumerWidget {
 
   Widget _buildAchievementsList(dynamic gameState) {
     return CustomScrollView(
+      controller: _scrollController, // ScrollController 추가
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

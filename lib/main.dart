@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/common/my_custom_scroll_behavior.dart';
+import 'package:steamplayground/db/indexdb_service.dart';
 import 'package:steamplayground/main_page.dart';
+
+final playerDB = IndexedDBService<Map<String, dynamic>>(
+  dbName: 'PlayerDB',
+  storeName: 'players',
+);
 
 void main() async {
   await dotenv.load();

@@ -53,6 +53,18 @@ class Player {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'steamid': steamId,
+      'personaname': personaName,
+      'profileurl': profileUrl,
+      'avatar': avatar,
+      'avatarfull': avatarFull,
+      'lastlogoff': lastLogoff,
+      'realname': realName,
+    };
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

@@ -39,7 +39,7 @@ class GameViewModel extends StateNotifier<CombinedState> {
       );
 
       final Set<OwnedGame> importantGames = response.response.games
-          .where((game) => game.playtimeForever > 600)
+          .where((game) => game.playtimeForever > 0)
           .map<OwnedGame>((game) => game)
           .toSet();
       final Map<int, bool> expandedState = {};

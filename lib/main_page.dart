@@ -7,12 +7,36 @@ import 'package:steamplayground/widget/loading_overlay.dart';
 import 'package:steamplayground/widget/player_list/player_list.dart';
 import 'package:steamplayground/widget/search_widget.dart';
 import 'package:steamplayground/widget/top_widget.dart';
+import 'package:steamplayground/api/models/player_summaries_response.dart'; // Player 클래스 경로
+import 'main.dart'; // IndexedDB 전역 변수 경로
 
-class MainPage extends ConsumerWidget {
+class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends ConsumerState<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+    _loadPlayersFromDB();
+  }
+
+  Future<void> _loadPlayersFromDB() async {
+    final dbData = await playerDB.getAll();
+    final players = dbData.map((json) => Player.fromJson(json)).toSet();
+
+    for (var player in players) {
+      print("player: $player");
+    }
+
+    ref.read(playerViewModelProvider.notifier).updatePlayers(players);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final playerState = ref.watch(playerViewModelProvider);
     final gameState = ref.watch(gameViewModelProvider);
 
@@ -23,7 +47,6 @@ class MainPage extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 실제 콘텐츠
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             width: MediaQuery.of(context).size.width -
@@ -32,14 +55,13 @@ class MainPage extends ConsumerWidget {
             child: CustomScrollView(
               slivers: [
                 TopWidget(),
-                const SearchWidget(), // 검색 위젯
-                if (playerListChecker) PlayerList(), // 플레이어 리스트
-                if (gameListChecker) GameList(), // 게임 리스트
+                const SearchWidget(),
+                if (playerListChecker) PlayerList(),
+                if (gameListChecker) GameList(),
               ],
             ),
           ),
           DrawerWidget(width: drawerWidth),
-          // 로딩 팝업
           if (gameState.loadingState.isLoading)
             LoadingOverlay(
               loadingState: gameState.loadingState,

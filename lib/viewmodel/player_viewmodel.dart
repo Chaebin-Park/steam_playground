@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:steamplayground/api/models/player_summaries_response.dart';
 import 'package:steamplayground/api/param/player_summaries_params.dart';
 import 'package:steamplayground/api/param/resolve_vanity_url_params.dart';
 import 'package:steamplayground/api/usecase/player_summaries_usecase.dart';
 import 'package:steamplayground/api/usecase/resolve_vanity_url_usecase.dart';
+import 'package:steamplayground/main.dart';
 import 'package:steamplayground/riverpod/player_state.dart';
 
 class PlayerViewModel extends StateNotifier<PlayerState> {
@@ -13,6 +15,10 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
     required this.playerSummariesUseCase,
     required this.resolveVanityURLUseCase,
   }) : super(const PlayerState());
+
+  void updatePlayers(Set<Player> players) {
+    state = state.copyWith(players: players);
+  }
 
   Future<void> fetchPlayerSummaries(String url) async {
     state = state.copyWith(isLoading: true, errorMessage: '');
@@ -45,6 +51,10 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
       final response = await playerSummariesUseCase.execute(
         PlayerSummariesParams(steamId: steamId),
       );
+
+      final player = response.response.players.first;
+
+      await playerDB.save(player.steamId, player.toJson());
 
       state = state.copyWith(
         players: {...state.players, response.response.players.first},
