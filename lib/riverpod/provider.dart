@@ -16,9 +16,9 @@ import 'package:steamplayground/viewmodel/player_viewmodel.dart';
 /// API
 
 final apiKeyProvider = Provider<String>((ref) {
-  final apiKey = dotenv.env['FLUTTER_APP_API_KEY'];
-  if (apiKey == null || apiKey.isEmpty) {
-    throw Exception("FLUTTER_APP_API_KEY is not defined in .env file.");
+  String apiKey = dotenv.env['FLUTTER_APP_API_KEY'] ?? const String.fromEnvironment('FLUTTER_APP_API_KEY');
+  if (apiKey.isEmpty) {
+    apiKey = const String.fromEnvironment('FLUTTER_APP_API_KEY');
   }
   return apiKey;
 });
@@ -28,8 +28,11 @@ final apiClientProvider = Provider<ApiClient>((ref) {
 });
 
 final steamRepositoryProvider = Provider<SteamRepository>((ref) {
-  final apiClient = ref.read(apiClientProvider);
-  return SteamRepositoryImpl(apiClient: apiClient);
+  const functionsBaseUrl = 'https://steamplayground-f24a7.cloudfunctions.net'; // Firebase Function URL 설정
+
+  return SteamRepositoryImpl(
+    functionsBaseUrl: functionsBaseUrl, // functionsBaseUrl 추가
+  );
 });
 
 /// Game

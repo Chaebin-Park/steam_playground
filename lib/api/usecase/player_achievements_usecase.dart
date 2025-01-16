@@ -1,3 +1,4 @@
+import 'package:steamplayground/api/api_config.dart';
 import 'package:steamplayground/api/models/player_achievements_response.dart';
 import 'package:steamplayground/api/param/player_archievements_params.dart';
 import 'package:steamplayground/api/repository/steam_repository.dart';
@@ -15,7 +16,7 @@ class PlayerAchievementsUseCase
       PlayerAchievementsParams params) async {
     try {
       final response = await repository.fetchData(
-        endpointKey: 'getPlayerAchievements',
+        endpointKey: ApiConfig.endpoints['getPlayerAchievements'].toString(),
         queryParameters: {
           ...params.toQueryParameters(),
           'key': apiKey,

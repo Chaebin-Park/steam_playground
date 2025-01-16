@@ -11,6 +11,54 @@
         "source": "**",
         "destination": "/index.html"
       }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Access-Control_Allow-Origin",
+            "value": "*"
+          }
+        ]
+      }
     ]
-  }
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "steamplayground-f24a7",
+          "appId": "1:802926305077:android:9047e4c4741104e7bf367c",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "steamplayground-f24a7",
+          "configurations": {
+            "android": "1:802926305077:android:9047e4c4741104e7bf367c",
+            "ios": "1:802926305077:ios:ee18cc80b43a0794bf367c",
+            "web": "1:802926305077:web:3af4d0279108386ebf367c"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ]
 }

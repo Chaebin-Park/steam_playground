@@ -1,3 +1,4 @@
+import 'package:steamplayground/api/api_config.dart';
 import 'package:steamplayground/api/models/resolve_vanity_url.dart';
 import 'package:steamplayground/api/param/resolve_vanity_url_params.dart';
 import 'package:steamplayground/api/repository/steam_repository.dart';
@@ -15,7 +16,7 @@ class ResolveVanityURLUseCase
       ResolveVanityURLParams params) async {
     try {
       final response = await repository.fetchData(
-        endpointKey: 'resolveVanityURL',
+        endpointKey: ApiConfig.endpoints['resolveVanityURL'].toString(),
         queryParameters: {
           ...params.toQueryParameters(),
           'key': apiKey,

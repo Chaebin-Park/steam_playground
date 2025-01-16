@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "802926305077",
+    "project_id": "steamplayground-f24a7",
+    "storage_bucket": "steamplayground-f24a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802926305077:android:9047e4c4741104e7bf367c",
+        "android_client_info": {
+          "package_name": "com.cbpark.steamplayground"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeu5SV3Cl0r0c0xy1iJmerBmMbxhaRj1Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

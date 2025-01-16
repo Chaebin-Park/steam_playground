@@ -1,30 +1,22 @@
-import 'package:steamplayground/api/api_client.dart';
-import 'package:steamplayground/api/api_config.dart';
-
+import 'dart:convert';
 import 'steam_repository.dart';
+import 'package:http/http.dart' as http;
 
 class SteamRepositoryImpl implements SteamRepository {
-  final ApiClient apiClient;
+  final String functionsBaseUrl;
 
-  SteamRepositoryImpl({required this.apiClient});
+  SteamRepositoryImpl({required this.functionsBaseUrl});
 
   @override
   Future<dynamic> fetchData({
     required String endpointKey,
     required Map<String, dynamic> queryParameters,
   }) async {
-    final endpoint = ApiConfig.endpoints[endpointKey];
-    if (endpoint == null) {
-      throw Exception('Endpoint $endpointKey is not defined');
-    }
+    final url = Uri.parse('$functionsBaseUrl/$endpointKey');  // Firebase Function URL
+    final response = await http.get(
+      url.replace(queryParameters: queryParameters),  // URL 쿼리 파라미터로 전달
+    );
 
-    final serializedQueryParameters = queryParameters.map((key, value) {
-      if (value is List<String>) {
-        return MapEntry(key, value.join(','));
-      }
-      return MapEntry(key, value ?? '');
-    });
-
-    return await apiClient.get(endpoint: endpoint, queryParameters: serializedQueryParameters);
+    return json.decode(response.body);  // JSON 형태로 응답 처리
   }
 }

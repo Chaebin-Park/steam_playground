@@ -1,3 +1,4 @@
+import 'package:steamplayground/api/api_config.dart';
 import 'package:steamplayground/api/models/schema_for_game_response.dart';
 import 'package:steamplayground/api/param/schema_for_game_params.dart';
 import 'package:steamplayground/api/repository/steam_repository.dart';
@@ -14,7 +15,7 @@ class SchemaForGameUseCase
   Future<SchemaForGameResponse> execute(SchemaForGameParams params) async {
     try {
       final response = await repository.fetchData(
-        endpointKey: 'getSchemaForGame',
+        endpointKey: ApiConfig.endpoints['getSchemaForGame'].toString(),
         queryParameters: {
           ...params.toQueryParameters(),
           'key': apiKey,

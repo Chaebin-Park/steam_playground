@@ -4,21 +4,24 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steamplayground/common/my_custom_scroll_behavior.dart';
 import 'package:steamplayground/db/indexdb_service.dart';
+import 'package:steamplayground/firebase_options.dart';
 import 'package:steamplayground/main_page.dart';
 
 final playerDB = IndexedDBService<Map<String, dynamic>>(
   dbName: 'PlayerDB',
   storeName: 'players',
 );
-
-Future<void> initializeDefault() async {
-  FirebaseApp app = await Firebase.initializeApp();
-  debugPrint('Initialized default app $app');
-}
+//
+// Future<void> initializeDefault() async {
+//   FirebaseApp app = await Firebase.initializeApp();
+//   debugPrint('Initialized default app $app');
+// }
 
 void main() async {
   await dotenv.load();
-  await initializeDefault();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 
