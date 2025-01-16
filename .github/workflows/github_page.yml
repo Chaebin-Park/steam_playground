@@ -19,14 +19,14 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "FLUTTER_APP_API_KEY=${{ secrets.FLUTTER_APP_API_TOKEN }}" > assets/.env
+          echo "FLUTTER_APP_API_KEY=${{ secrets.FLUTTER_APP_API_TOKEN }}" > .env
         env:
           FLUTTER_APP_API_KEY: ${{ secrets.FLUTTER_APP_API_KEY }}
 
-      - name: Copy .env file to build directory
-        run: |
-          mkdir -p build/web/assets
-          cp assets/.env build/web/assets/.env
+#      - name: Copy .env file to build directory
+#        run: |
+#          mkdir -p build/web/assets
+#          cp assets/.env build/web/assets/.env
 
       - name: Install Dependencies
         run: flutter pub get
