@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,8 +11,14 @@ final playerDB = IndexedDBService<Map<String, dynamic>>(
   storeName: 'players',
 );
 
+Future<void> initializeDefault() async {
+  FirebaseApp app = await Firebase.initializeApp();
+  debugPrint('Initialized default app $app');
+}
+
 void main() async {
   await dotenv.load();
+  await initializeDefault();
   runApp(const ProviderScope(child: MyApp()));
 }
 
