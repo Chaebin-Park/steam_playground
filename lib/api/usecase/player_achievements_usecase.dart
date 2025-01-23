@@ -7,19 +7,17 @@ import 'package:steamplayground/api/usecase/usecase.dart';
 class PlayerAchievementsUseCase
     implements UseCase<PlayerAchievementsResponse, PlayerAchievementsParams> {
   final SteamRepository repository;
-  final String apiKey;
 
-  PlayerAchievementsUseCase({required this.repository, required this.apiKey});
+  PlayerAchievementsUseCase({required this.repository});
 
   @override
   Future<PlayerAchievementsResponse> execute(
       PlayerAchievementsParams params) async {
     try {
       final response = await repository.fetchData(
-        endpointKey: ApiConfig.endpoints['getPlayerAchievements'].toString(),
+        endpointKey: '/getPlayerAchievements',
         queryParameters: {
           ...params.toQueryParameters(),
-          'key': apiKey,
         },
       );
 

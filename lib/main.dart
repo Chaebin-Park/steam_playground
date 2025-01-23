@@ -11,14 +11,9 @@ final playerDB = IndexedDBService<Map<String, dynamic>>(
   dbName: 'PlayerDB',
   storeName: 'players',
 );
-//
-// Future<void> initializeDefault() async {
-//   FirebaseApp app = await Firebase.initializeApp();
-//   debugPrint('Initialized default app $app');
-// }
 
 void main() async {
-  await dotenv.load();
+  // await dotenv.load();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

@@ -7,18 +7,16 @@ import 'package:steamplayground/api/usecase/usecase.dart';
 class SchemaForGameUseCase
     implements UseCase<SchemaForGameResponse, SchemaForGameParams> {
   final SteamRepository repository;
-  final String apiKey;
 
-  SchemaForGameUseCase({required this.repository, required this.apiKey});
+  SchemaForGameUseCase({required this.repository});
 
   @override
   Future<SchemaForGameResponse> execute(SchemaForGameParams params) async {
     try {
       final response = await repository.fetchData(
-        endpointKey: ApiConfig.endpoints['getSchemaForGame'].toString(),
+        endpointKey: '/getSchemaForGame',
         queryParameters: {
           ...params.toQueryParameters(),
-          'key': apiKey,
         },
       );
 

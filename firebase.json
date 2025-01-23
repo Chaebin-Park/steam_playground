@@ -1,50 +1,4 @@
 {
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.* !**/.env",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "headers": [
-      {
-        "source": "**",
-        "headers": [
-          {
-            "key": "Access-Control_Allow-Origin",
-            "value": "*"
-          }
-        ]
-      }
-    ]
-  },
-  "flutter": {
-    "platforms": {
-      "android": {
-        "default": {
-          "projectId": "steamplayground-f24a7",
-          "appId": "1:802926305077:android:9047e4c4741104e7bf367c",
-          "fileOutput": "android/app/google-services.json"
-        }
-      },
-      "dart": {
-        "lib/firebase_options.dart": {
-          "projectId": "steamplayground-f24a7",
-          "configurations": {
-            "android": "1:802926305077:android:9047e4c4741104e7bf367c",
-            "ios": "1:802926305077:ios:ee18cc80b43a0794bf367c",
-            "web": "1:802926305077:web:3af4d0279108386ebf367c"
-          }
-        }
-      }
-    }
-  },
   "functions": [
     {
       "source": "functions",
@@ -60,5 +14,42 @@
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
-  ]
+  ],
+  "hosting": {
+    "public": "web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "asia-east1"
+    },
+    "rewrites": [
+      {
+        "source": "/us-central1-steamplayground-f24a7.cloudfunctions.net/getPlayerSummaries",
+        "function": "getPlayerSummaries"
+      },
+      {
+        "source": "/us-central1-steamplayground-f24a7.cloudfunctions.net/getOwnedGames",
+        "function": "getOwnedGames"
+      },
+      {
+        "source": "/us-central1-steamplayground-f24a7.cloudfunctions.net/getPlayerAchievements",
+        "function": "getPlayerAchievements"
+      },
+      {
+        "source": "/us-central1-steamplayground-f24a7.cloudfunctions.net/resolveVanityURL",
+        "function": "resolveVanityURL"
+      },
+      {
+        "source": "/us-central1-steamplayground-f24a7.cloudfunctions.net/schemaForGame",
+        "function": "schemaForGame"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
 }

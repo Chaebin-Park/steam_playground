@@ -13,23 +13,13 @@ import 'package:steamplayground/riverpod/player_state.dart';
 import 'package:steamplayground/viewmodel/game_viewmodel.dart';
 import 'package:steamplayground/viewmodel/player_viewmodel.dart';
 
-/// API
-
-final apiKeyProvider = Provider<String>((ref) {
-  String apiKey = dotenv.env['FLUTTER_APP_API_KEY'] ?? const String.fromEnvironment('FLUTTER_APP_API_KEY');
-  if (apiKey.isEmpty) {
-    apiKey = const String.fromEnvironment('FLUTTER_APP_API_KEY');
-  }
-  return apiKey;
-});
-
+///api
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient();
 });
 
 final steamRepositoryProvider = Provider<SteamRepository>((ref) {
-  const functionsBaseUrl = 'https://steamplayground-f24a7.cloudfunctions.net'; // Firebase Function URL 설정
-
+  const functionsBaseUrl = "/api";
   return SteamRepositoryImpl(
     functionsBaseUrl: functionsBaseUrl, // functionsBaseUrl 추가
   );
@@ -38,22 +28,18 @@ final steamRepositoryProvider = Provider<SteamRepository>((ref) {
 /// Game
 final ownedGamesUseCaseProvider = Provider<OwnedGamesUseCase>((ref) {
   final repository = ref.read(steamRepositoryProvider);
-  final apiKey = ref.read(apiKeyProvider);
-
-  return OwnedGamesUseCase(repository: repository, apiKey: apiKey);
+  return OwnedGamesUseCase(repository: repository);
 });
 
 final playerAchievementsUseCaseProvider =
     Provider<PlayerAchievementsUseCase>((ref) {
   final repository = ref.read(steamRepositoryProvider);
-  final apiKey = ref.read(apiKeyProvider);
-  return PlayerAchievementsUseCase(repository: repository, apiKey: apiKey);
+  return PlayerAchievementsUseCase(repository: repository);
 });
 
 final schemaForGameUseCaseProvider = Provider<SchemaForGameUseCase>((ref) {
   final repository = ref.read(steamRepositoryProvider);
-  final apiKey = ref.read(apiKeyProvider);
-  return SchemaForGameUseCase(repository: repository, apiKey: apiKey);
+  return SchemaForGameUseCase(repository: repository);
 });
 
 final gameViewModelProvider =
@@ -72,15 +58,17 @@ final gameViewModelProvider =
 /// Player
 final playerSummariesUseCaseProvider = Provider<PlayerSummariesUseCase>((ref) {
   final repository = ref.read(steamRepositoryProvider);
-  final apiKey = ref.read(apiKeyProvider);
-  return PlayerSummariesUseCase(repository: repository, apiKey: apiKey);
+  // final apiKey = ref.read(apiKeyProvider);
+  // return PlayerSummariesUseCase(repository: repository, apiKey: apiKey);
+  return PlayerSummariesUseCase(repository: repository);
 });
 
 final resolveVanityURLUseCaseProvider =
     Provider<ResolveVanityURLUseCase>((ref) {
   final repository = ref.read(steamRepositoryProvider);
-  final apiKey = ref.read(apiKeyProvider);
-  return ResolveVanityURLUseCase(repository: repository, apiKey: apiKey);
+  // final apiKey = ref.read(apiKeyProvider);
+  // return ResolveVanityURLUseCase(repository: repository, apiKey: apiKey);
+  return ResolveVanityURLUseCase(repository: repository);
 });
 
 final playerViewModelProvider =
